@@ -1,10 +1,11 @@
 package com.mikedeejay2.oosql.column;
 
+import com.mikedeejay2.oosql.SQLObject;
 import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 import com.mikedeejay2.oosql.table.SQLTable;
 
-public class SQLColumn
+public class SQLColumn implements SQLObject
 {
     protected SQLTable table;
     protected SQLDataType type;

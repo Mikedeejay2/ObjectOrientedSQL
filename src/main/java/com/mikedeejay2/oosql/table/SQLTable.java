@@ -1,9 +1,10 @@
 package com.mikedeejay2.oosql.table;
 
+import com.mikedeejay2.oosql.SQLObject;
 import com.mikedeejay2.oosql.column.SQLColumn;
 import com.mikedeejay2.oosql.database.SQLDatabase;
 
-public class SQLTable
+public class SQLTable implements SQLObject
 {
     protected final SQLDatabase database;
     protected String name;

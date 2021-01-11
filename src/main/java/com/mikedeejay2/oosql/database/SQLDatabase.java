@@ -1,5 +1,6 @@
 package com.mikedeejay2.oosql.database;
 
+import com.mikedeejay2.oosql.SQLObject;
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.connector.MySQLConnection;
 import com.mikedeejay2.oosql.connector.SQLConnection;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SQLDatabase
+public class SQLDatabase implements SQLObject
 {
     protected final SQLType type;
     protected SQLConnection connection;

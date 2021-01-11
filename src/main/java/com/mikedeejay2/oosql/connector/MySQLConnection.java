@@ -1,5 +1,7 @@
 package com.mikedeejay2.oosql.connector;
 
+import com.mikedeejay2.oosql.connector.data.MySQLConnectionData;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -7,21 +9,11 @@ import java.sql.SQLException;
 public class MySQLConnection implements SQLConnection
 {
     protected Connection connection;
-    protected String host;
-    protected int port;
-    protected String username;
-    protected String password;
-    protected String database;
-    protected boolean useSSL;
+    protected MySQLConnectionData data;
 
-    public MySQLConnection(String host, int port, String username, String password, String database)
+    public MySQLConnection(MySQLConnectionData connectionData)
     {
-        this.host = host;
-        this.port = port;
-        this.username = username;
-        this.password = password;
-        this.database = database;
-        this.useSSL = false;
+        this.data = connectionData;
     }
 
     @Override
@@ -33,8 +25,8 @@ public class MySQLConnection implements SQLConnection
 
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(
-                    "jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=" + useSSL,
-                    username, password);
+                    "jdbc:mysql://" + data.getHost() + ":" + data.getPort() + "/" + data.getDBName() + "?useSSL=" + data.useSSL(),
+                    data.getUsername(), data.getPassword());
 
             return true;
         }
@@ -82,63 +74,8 @@ public class MySQLConnection implements SQLConnection
         return false;
     }
 
-    public String getHost()
+    public MySQLConnectionData getData()
     {
-        return host;
-    }
-
-    public void setHost(String host)
-    {
-        this.host = host;
-    }
-
-    public int getPort()
-    {
-        return port;
-    }
-
-    public void setPort(int port)
-    {
-        this.port = port;
-    }
-
-    public String getUsername()
-    {
-        return username;
-    }
-
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }
-
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
-    }
-
-    public String getDatabase()
-    {
-        return database;
-    }
-
-    public void setDatabase(String database)
-    {
-        this.database = database;
-    }
-
-    public boolean isUseSSL()
-    {
-        return useSSL;
-    }
-
-    public void setUseSSL(boolean useSSL)
-    {
-        this.useSSL = useSSL;
+        return data;
     }
 }

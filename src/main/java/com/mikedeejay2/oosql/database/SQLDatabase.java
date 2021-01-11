@@ -5,6 +5,9 @@ import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.connector.MySQLConnection;
 import com.mikedeejay2.oosql.connector.SQLConnection;
 import com.mikedeejay2.oosql.connector.SQLiteConnection;
+import com.mikedeejay2.oosql.connector.data.MySQLConnectionData;
+import com.mikedeejay2.oosql.connector.data.SQLConnectionData;
+import com.mikedeejay2.oosql.connector.data.SQLiteConnectionData;
 import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 import com.mikedeejay2.oosql.misc.SQLType;
@@ -12,7 +15,6 @@ import com.mikedeejay2.oosql.table.SQLTable;
 import com.mikedeejay2.oosql.table.SQLTableMeta;
 import com.mikedeejay2.oosql.table.SQLTableType;
 
-import java.io.File;
 import java.sql.*;
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -21,44 +23,30 @@ import java.util.Map;
 
 public class SQLDatabase implements SQLObject
 {
-    protected final SQLType type;
     protected SQLConnection connection;
-    protected String host;
-    protected int port;
-    protected String username;
-    protected String password;
-    protected String databaseName;
+    protected SQLConnectionData connectionData;
 
-    public SQLDatabase(SQLType type)
+    public SQLDatabase(SQLConnectionData data)
     {
-        this.type = type;
+        this.connectionData = data;
     }
 
-    public void setInfo(String host, int port, String username, String password, String databaseName)
+    public void setInfo(SQLConnectionData data)
     {
-        this.host = host;
-        this.port = port;
-        this.username = username;
-        this.password = password;
-        this.databaseName = databaseName;
+        this.connectionData = data;
     }
 
-    public void setInfo(String database)
-    {
-        this.databaseName = database;
-    }
-
-    public void connect(boolean throwErrors, File dbFile)
+    public void connect(boolean throwErrors)
     {
         if(isConnected()) return;
-        switch(type)
+        switch(connectionData.getType())
         {
             case MYSQL:
-                if(connection == null) this.connection = new MySQLConnection(host, port, username, password, databaseName);
+                if(connection == null) this.connection = new MySQLConnection((MySQLConnectionData) connectionData);
                 connection.connect(throwErrors);
                 break;
             case SQLITE:
-                if(connection == null) this.connection = new SQLiteConnection(databaseName, dbFile);
+                if(connection == null) this.connection = new SQLiteConnection((SQLiteConnectionData) connectionData);
                 connection.connect(throwErrors);
                 break;
         }
@@ -87,32 +75,17 @@ public class SQLDatabase implements SQLObject
 
     public SQLType getType()
     {
-        return type;
+        return connectionData.getType();
     }
 
-    public String getHost()
+    public String getDBName()
     {
-        return host;
+        return connectionData.getDBName();
     }
 
-    public int getPort()
+    public SQLConnectionData getConnectionData()
     {
-        return port;
-    }
-
-    public String getUsername()
-    {
-        return username;
-    }
-
-    public String getPassword()
-    {
-        return password;
-    }
-
-    public String getDatabaseName()
-    {
-        return databaseName;
+        return connectionData;
     }
 
     public SQLTable getTable(String tableName)

@@ -1,5 +1,7 @@
 package com.mikedeejay2.oosql.connector;
 
+import com.mikedeejay2.oosql.connector.data.SQLiteConnectionData;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,22 +11,20 @@ import java.util.logging.Level;
 public class SQLiteConnection implements SQLConnection
 {
     protected Connection connection;
-    protected String database;
-    protected File dbFile;
+    protected SQLiteConnectionData data;
 
-    public SQLiteConnection(String database, File dbFile)
+    public SQLiteConnection(SQLiteConnectionData connectionData)
     {
-        this.database = database;
-        this.dbFile = dbFile;
+        this.data = connectionData;
     }
 
     @Override
     public synchronized boolean connect(boolean throwErrors)
     {
         if(isConnected()) return false;
+        File dbFile = data.getDbFile();
         try
         {
-
             if(!dbFile.exists())
             {
                 dbFile.getParentFile().mkdirs();
@@ -86,5 +86,10 @@ public class SQLiteConnection implements SQLConnection
             e.printStackTrace();
             return false;
         }
+    }
+
+    public SQLiteConnectionData getData()
+    {
+        return data;
     }
 }

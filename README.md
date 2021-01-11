@@ -1,4 +1,4 @@
-# ObjectOrientedSQL
+# Object Oriented SQL
 An attempt at an object oriented wrapper for SQL in Java.
 
 :warning: Work in progress! This project isn't even close to being usable yet! If you really want to try to use this,

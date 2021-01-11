@@ -36,26 +36,25 @@ public class SQLDatabase implements SQLObject
         this.connectionData = data;
     }
 
-    public void connect(boolean throwErrors)
+    public boolean connect(boolean throwErrors)
     {
-        if(isConnected()) return;
+        if(isConnected()) return false;
         switch(connectionData.getType())
         {
             case MYSQL:
                 if(connection == null) this.connection = new MySQLConnection((MySQLConnectionData) connectionData);
-                connection.connect(throwErrors);
-                break;
+                return connection.connect(throwErrors);
             case SQLITE:
                 if(connection == null) this.connection = new SQLiteConnection((SQLiteConnectionData) connectionData);
-                connection.connect(throwErrors);
-                break;
+                return connection.connect(throwErrors);
         }
+        return false;
     }
 
-    public void disconnect(boolean throwErrors)
+    public boolean disconnect(boolean throwErrors)
     {
-        if(!isConnected()) return;
-        connection.disconnect(throwErrors);
+        if(!isConnected()) return false;
+        return connection.disconnect(throwErrors);
     }
 
     public boolean isConnected()

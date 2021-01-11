@@ -4,7 +4,7 @@ An attempt at an object oriented wrapper for SQL in Java.
 :warning: Work in progress! This project isn't even close to being usable yet! If you really want to try to use this,
 there's nothing stopping you from adding it as a dependency through Maven. 
 Check [this POM file](https://github.com/Mikedeejay2/Mikedeejay2-Maven-Repo/blob/master/ExampleDependencyPOM.xml)
-for how to use this.
+of roughly how to add this to your project.
 
 ### What is this project attempting to do?
 Essentially, this project is trying to create a wrapper around SQL (Structured Query Language) that is object oriented, 

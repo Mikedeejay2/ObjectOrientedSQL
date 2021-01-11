@@ -14,7 +14,7 @@ So instead of:
 ```
 try
 {
-  PreparedStatement statement = connection.prepareStatement("SELECT * FROM `" + table_name + "`");
+  PreparedStatement statement = connection.prepareStatement("SELECT * FROM `table_name`");
   ResultSet set = statement.executeQuery(); // This is what we want
 }
 catch(Exception e) { /* Blah blah blah */ }

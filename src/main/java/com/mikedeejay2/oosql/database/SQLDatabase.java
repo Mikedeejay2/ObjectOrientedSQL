@@ -1,6 +1,5 @@
 package com.mikedeejay2.oosql.database;
 
-import com.mikedeejay2.oosql.SQLObject;
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.connector.MySQLConnection;
 import com.mikedeejay2.oosql.connector.SQLConnection;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SQLDatabase implements SQLObject
+public class SQLDatabase implements SQLDatabaseInterface
 {
     protected SQLConnection connection;
     protected SQLConnectionData connectionData;
@@ -31,11 +30,13 @@ public class SQLDatabase implements SQLObject
         this.connectionData = data;
     }
 
+    @Override
     public void setInfo(SQLConnectionData data)
     {
         this.connectionData = data;
     }
 
+    @Override
     public boolean connect(boolean throwErrors)
     {
         if(isConnected()) return false;
@@ -51,42 +52,50 @@ public class SQLDatabase implements SQLObject
         return false;
     }
 
+    @Override
     public boolean disconnect(boolean throwErrors)
     {
         if(!isConnected()) return false;
         return connection.disconnect(throwErrors);
     }
 
+    @Override
     public boolean isConnected()
     {
         return connection != null && connection.isConnected();
     }
 
+    @Override
     public SQLConnection getSQLConnection()
     {
         return connection;
     }
 
+    @Override
     public Connection getConnection()
     {
         return connection.getConnection();
     }
 
+    @Override
     public SQLType getType()
     {
         return connectionData.getType();
     }
 
+    @Override
     public String getDBName()
     {
         return connectionData.getDBName();
     }
 
+    @Override
     public SQLConnectionData getConnectionData()
     {
         return connectionData;
     }
 
+    @Override
     public SQLTable getTable(String tableName)
     {
         try
@@ -94,8 +103,8 @@ public class SQLDatabase implements SQLObject
             ResultSet result = getMetaData().getTables(null, null, tableName, null);
             if(result.next())
             {
-                SQLTableType type  = SQLTableType.valueOf(result.getString(SQLTableMeta.TABLE_TYPE.toString()));
-                SQLTable     table = new SQLTable(this, tableName, type);
+                SQLTableType type = SQLTableType.valueOf(result.getString(SQLTableMeta.TABLE_TYPE.toString()));
+                SQLTable table = new SQLTable(this, tableName, type);
                 return table;
             }
         }
@@ -106,6 +115,7 @@ public class SQLDatabase implements SQLObject
         return null;
     }
 
+    @Override
     public SQLTable createTable(String tableName, SQLColumnInfo... info)
     {
         StringBuilder builder = new StringBuilder();
@@ -183,6 +193,7 @@ public class SQLDatabase implements SQLObject
         return table;
     }
 
+    @Override
     public boolean removeTable(String tableName)
     {
 
@@ -192,6 +203,7 @@ public class SQLDatabase implements SQLObject
         return code != -1;
     }
 
+    @Override
     public int executeUpdate(String command)
     {
         try
@@ -206,6 +218,7 @@ public class SQLDatabase implements SQLObject
         }
     }
 
+    @Override
     public ResultSet executeQuery(String command)
     {
         try
@@ -221,6 +234,7 @@ public class SQLDatabase implements SQLObject
         }
     }
 
+    @Override
     public int executeUpdate(PreparedStatement statement)
     {
         try
@@ -234,6 +248,7 @@ public class SQLDatabase implements SQLObject
         }
     }
 
+    @Override
     public ResultSet executeQuery(PreparedStatement statement)
     {
         try
@@ -247,6 +262,7 @@ public class SQLDatabase implements SQLObject
         }
     }
 
+    @Override
     public PreparedStatement prepareStatement(String command)
     {
         try
@@ -260,6 +276,7 @@ public class SQLDatabase implements SQLObject
         }
     }
 
+    @Override
     public DatabaseMetaData getMetaData()
     {
         try
@@ -273,6 +290,7 @@ public class SQLDatabase implements SQLObject
         }
     }
 
+    @Override
     public ResultSet getTables(SQLTableType type)
     {
         try

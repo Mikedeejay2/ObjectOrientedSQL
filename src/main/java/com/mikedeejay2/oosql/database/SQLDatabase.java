@@ -111,7 +111,9 @@ public class SQLDatabase implements SQLObject
         StringBuilder builder = new StringBuilder();
         builder.append("CREATE TABLE `")
                .append(tableName)
-               .append("` (");
+               .append("`");
+
+        if(info.length > 0) builder.append(" (");
 
         List<Map.Entry<SQLConstraint, SQLColumnInfo>> endConstraints = new ArrayList<>();
 
@@ -168,7 +170,7 @@ public class SQLDatabase implements SQLObject
                    .append(")");
         }
 
-        builder.append(");");
+        if(info.length > 0) builder.append(")");
 
         String command = builder.toString();
 

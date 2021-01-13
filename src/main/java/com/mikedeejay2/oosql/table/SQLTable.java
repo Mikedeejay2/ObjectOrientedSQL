@@ -42,7 +42,7 @@ public class SQLTable implements SQLTableInterface
             ResultSet result = database.getMetaData().getColumns(null, null, tableName, columnName);
             if(result.next())
             {
-                SQLDataType dataType = SQLDataType.valueOf(result.getString(SQLColumnMeta.DATA_TYPE.toString()));
+                SQLDataType dataType = SQLDataType.fromNative(result.getInt(SQLColumnMeta.DATA_TYPE.toString()));
                 SQLColumn column = new SQLColumn(this, columnName, dataType);
                 return column;
             }
@@ -57,11 +57,12 @@ public class SQLTable implements SQLTableInterface
     @Override
     public SQLColumn getColumn(int index)
     {
+        ++index;
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
-            ResultSetMetaData metadata = result.getMetaData();
-            String columnName = metadata.getColumnName(index);
+            result.absolute(index);
+            String columnName = result.getString(SQLColumnMeta.COLUMN_NAME.toString());
             return getColumn(columnName);
         }
         catch(SQLException throwables)

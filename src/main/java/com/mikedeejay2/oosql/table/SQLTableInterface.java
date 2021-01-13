@@ -16,7 +16,7 @@ public interface SQLTableInterface extends SQLObject
 
     public SQLDatabase getDatabase();
 
-    public String getName();
+    public String getTableName();
 
     public SQLTableType getType();
 }

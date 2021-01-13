@@ -10,16 +10,12 @@ public class SQLColumn implements SQLObject
     protected SQLTable table;
     protected SQLDataType type;
     protected String name;
-    protected int[] sizes;
-    protected SQLConstraint[] constraints;
 
-    public SQLColumn(SQLTable parentTable, SQLDataType type, String name, int[] sizes, SQLConstraint[] constraints)
+    public SQLColumn(SQLTable parentTable, String name, SQLDataType type)
     {
         this.table = parentTable;
         this.type = type;
         this.name = name;
-        this.sizes = sizes;
-        this.constraints = constraints;
     }
 
     public SQLTable getParentTable()
@@ -44,11 +40,11 @@ public class SQLColumn implements SQLObject
 
     public int[] getSizes()
     {
-        return sizes;
+        return null;
     }
 
     public SQLConstraint[] getConstraints()
     {
-        return constraints;
+        return null;
     }
 }

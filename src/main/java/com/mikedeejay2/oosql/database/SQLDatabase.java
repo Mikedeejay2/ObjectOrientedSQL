@@ -291,16 +291,23 @@ public class SQLDatabase implements SQLDatabaseInterface
     }
 
     @Override
-    public ResultSet getTables(SQLTableType type)
+    public SQLTable[] getTables(SQLTableType type)
     {
+        List<SQLTable> tables = new ArrayList<>();
         try
         {
-            return this.getMetaData().getTables(null, null, null, new String[]{type.get()});
+            ResultSet result = this.getMetaData().getTables(null, null, null, new String[]{type.get()});
+            while(result.next())
+            {
+                String tableName = result.getString(SQLTableMeta.TABLE_NAME.toString());
+                SQLTable table = new SQLTable(this, tableName, type);
+                tables.add(table);
+            }
         }
         catch(SQLException throwables)
         {
             throwables.printStackTrace();
-            return null;
         }
+        return tables.toArray(new SQLTable[0]);
     }
 }

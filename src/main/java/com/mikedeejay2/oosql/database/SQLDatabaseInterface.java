@@ -48,5 +48,5 @@ interface SQLDatabaseInterface extends SQLObject
 
     DatabaseMetaData getMetaData();
 
-    ResultSet getTables(SQLTableType type);
+    SQLTable[] getTables(SQLTableType type);
 }

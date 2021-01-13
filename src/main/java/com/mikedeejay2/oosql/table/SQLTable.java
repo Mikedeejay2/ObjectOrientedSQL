@@ -6,7 +6,6 @@ import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +14,11 @@ public class SQLTable implements SQLTableInterface
 {
     protected final SQLDatabase database;
     protected String tableName;
-    protected SQLTableType type;
 
-    public SQLTable(SQLDatabase database, String tableName, SQLTableType type)
+    public SQLTable(SQLDatabase database, String tableName)
     {
         this.database = database;
         this.tableName = tableName;
-        this.type = type;
     }
 
     @Override
@@ -108,8 +105,25 @@ public class SQLTable implements SQLTableInterface
     }
 
     @Override
-    public SQLTableType getType()
+    public SQLTableType getTableType()
     {
-        return type;
+        String tableTypeStr = getTableMeta(SQLTableMeta.TABLE_TYPE);
+        SQLTableType tableType = SQLTableType.valueOf(tableTypeStr);
+        return tableType;
+    }
+
+    @Override
+    public String getTableMeta(SQLTableMeta metaType)
+    {
+        try
+        {
+            ResultSet result = database.getMetaData().getTables(null, null, tableName, null);
+            return result.getString(metaType.toString());
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return null;
     }
 }

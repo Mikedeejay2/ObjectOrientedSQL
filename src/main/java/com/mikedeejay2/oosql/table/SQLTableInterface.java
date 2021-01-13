@@ -6,17 +6,19 @@ import com.mikedeejay2.oosql.database.SQLDatabase;
 
 public interface SQLTableInterface extends SQLObject
 {
-    public boolean renameTable(String newName);
+    boolean renameTable(String newName);
 
-    public SQLColumn getColumn(String columnName);
+    SQLColumn getColumn(String columnName);
 
-    public SQLColumn getColumn(int index);
+    SQLColumn getColumn(int index);
 
-    public SQLColumn[] getColumns();
+    SQLColumn[] getColumns();
 
-    public SQLDatabase getDatabase();
+    SQLDatabase getDatabase();
 
-    public String getTableName();
+    String getTableName();
 
-    public SQLTableType getType();
+    SQLTableType getTableType();
+
+    String getTableMeta(SQLTableMeta metaType);
 }

@@ -34,21 +34,8 @@ public class SQLTable implements SQLTableInterface
     @Override
     public SQLColumn getColumn(String columnName)
     {
-        try
-        {
-            ResultSet result = database.getMetaData().getColumns(null, null, tableName, columnName);
-            if(result.next())
-            {
-                SQLDataType dataType = SQLDataType.fromNative(result.getInt(SQLColumnMeta.DATA_TYPE.toString()));
-                SQLColumn column = new SQLColumn(this, columnName, dataType);
-                return column;
-            }
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-        }
-        return null;
+        if(!columnExists(columnName)) return null;
+        return new SQLColumn(this, columnName);
     }
 
     @Override
@@ -79,8 +66,7 @@ public class SQLTable implements SQLTableInterface
             while(result.next())
             {
                 String columnName = result.getString(SQLColumnMeta.COLUMN_NAME.toString());
-                SQLDataType dataType = SQLDataType.valueOf(result.getString(SQLColumnMeta.DATA_TYPE.toString()));
-                SQLColumn column = new SQLColumn(this, columnName, dataType);
+                SQLColumn column = new SQLColumn(this, columnName);
                 columns.add(column);
             }
         }
@@ -99,7 +85,7 @@ public class SQLTable implements SQLTableInterface
     }
 
     @Override
-    public String getTableName()
+    public String getName()
     {
         return tableName;
     }
@@ -107,13 +93,13 @@ public class SQLTable implements SQLTableInterface
     @Override
     public SQLTableType getTableType()
     {
-        String tableTypeStr = getTableMeta(SQLTableMeta.TABLE_TYPE);
+        String tableTypeStr = getMeta(SQLTableMeta.TABLE_TYPE);
         SQLTableType tableType = SQLTableType.valueOf(tableTypeStr);
         return tableType;
     }
 
     @Override
-    public String getTableMeta(SQLTableMeta metaType)
+    public String getMeta(SQLTableMeta metaType)
     {
         try
         {
@@ -125,5 +111,26 @@ public class SQLTable implements SQLTableInterface
             throwables.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public boolean columnExists(String columnName)
+    {
+        try
+        {
+            ResultSet result = database.getMetaData().getColumns(null, null, tableName, columnName);
+            return result.next();
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean columnExists(SQLColumn column)
+    {
+        return columnExists(column.getName());
     }
 }

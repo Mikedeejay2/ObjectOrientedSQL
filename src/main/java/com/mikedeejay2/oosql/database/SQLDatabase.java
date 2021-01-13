@@ -84,7 +84,7 @@ public class SQLDatabase implements SQLDatabaseInterface
     }
 
     @Override
-    public String getDBName()
+    public String getName()
     {
         return connectionData.getDBName();
     }
@@ -98,7 +98,7 @@ public class SQLDatabase implements SQLDatabaseInterface
     @Override
     public SQLTable getTable(String tableName)
     {
-        if(!containsTable(tableName)) return null;
+        if(!tableExists(tableName)) return null;
         return new SQLTable(this, tableName);
     }
 
@@ -299,7 +299,7 @@ public class SQLDatabase implements SQLDatabaseInterface
     }
 
     @Override
-    public boolean containsTable(String tableName)
+    public boolean tableExists(String tableName)
     {
         try
         {
@@ -314,8 +314,8 @@ public class SQLDatabase implements SQLDatabaseInterface
     }
 
     @Override
-    public boolean containsTable(SQLTable table)
+    public boolean tableExists(SQLTable table)
     {
-        return containsTable(table.getTableName());
+        return tableExists(table.getName());
     }
 }

@@ -26,7 +26,7 @@ interface SQLDatabaseInterface extends SQLObject
 
     SQLType getType();
 
-    String getDBName();
+    String getName();
 
     SQLConnectionData getConnectionData();
 
@@ -50,7 +50,7 @@ interface SQLDatabaseInterface extends SQLObject
 
     SQLTable[] getTables(SQLTableType type);
 
-    boolean containsTable(String tableName);
+    boolean tableExists(String tableName);
 
-    boolean containsTable(SQLTable table);
+    boolean tableExists(SQLTable table);
 }

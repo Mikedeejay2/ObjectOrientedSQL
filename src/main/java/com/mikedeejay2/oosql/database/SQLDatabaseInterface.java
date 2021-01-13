@@ -49,4 +49,8 @@ interface SQLDatabaseInterface extends SQLObject
     DatabaseMetaData getMetaData();
 
     SQLTable[] getTables(SQLTableType type);
+
+    boolean containsTable(String tableName);
+
+    boolean containsTable(SQLTable table);
 }

@@ -98,21 +98,8 @@ public class SQLDatabase implements SQLDatabaseInterface
     @Override
     public SQLTable getTable(String tableName)
     {
-        try
-        {
-            ResultSet result = getMetaData().getTables(null, null, tableName, null);
-            if(result.next())
-            {
-                SQLTableType type = SQLTableType.valueOf(result.getString(SQLTableMeta.TABLE_TYPE.toString()));
-                SQLTable table = new SQLTable(this, tableName, type);
-                return table;
-            }
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-        }
-        return null;
+        if(!containsTable(tableName)) return null;
+        return new SQLTable(this, tableName);
     }
 
     @Override
@@ -189,7 +176,7 @@ public class SQLDatabase implements SQLDatabaseInterface
         int code = executeUpdate(command);
         if(code == -1) return null;
 
-        SQLTable table = new SQLTable(this, tableName, SQLTableType.TABLE);
+        SQLTable table = new SQLTable(this, tableName);
         return table;
     }
 
@@ -300,7 +287,7 @@ public class SQLDatabase implements SQLDatabaseInterface
             while(result.next())
             {
                 String tableName = result.getString(SQLTableMeta.TABLE_NAME.toString());
-                SQLTable table = new SQLTable(this, tableName, type);
+                SQLTable table = new SQLTable(this, tableName);
                 tables.add(table);
             }
         }
@@ -309,5 +296,26 @@ public class SQLDatabase implements SQLDatabaseInterface
             throwables.printStackTrace();
         }
         return tables.toArray(new SQLTable[0]);
+    }
+
+    @Override
+    public boolean containsTable(String tableName)
+    {
+        try
+        {
+            ResultSet result = getMetaData().getTables(null, null, tableName, null);
+            return result.next();
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean containsTable(SQLTable table)
+    {
+        return containsTable(table.getTableName());
     }
 }

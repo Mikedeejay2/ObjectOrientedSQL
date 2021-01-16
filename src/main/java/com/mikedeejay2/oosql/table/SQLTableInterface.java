@@ -27,4 +27,6 @@ public interface SQLTableInterface extends SQLObject
     boolean columnExists(SQLColumn column);
 
     int getColumnsAmount();
+
+    int getRowsAmount();
 }

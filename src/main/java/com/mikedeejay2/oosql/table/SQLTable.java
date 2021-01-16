@@ -6,6 +6,7 @@ import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -140,7 +141,23 @@ public class SQLTable implements SQLTableInterface
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
-            return result.getFetchSize();
+            ResultSetMetaData meta = result.getMetaData();
+            return meta.getColumnCount();
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public int getRowsAmount()
+    {
+        try
+        {
+            ResultSet result = database.executeQuery("SELECT COUNT(*) FROM `" + tableName + "`");
+            return result.getInt(1);
         }
         catch(SQLException throwables)
         {

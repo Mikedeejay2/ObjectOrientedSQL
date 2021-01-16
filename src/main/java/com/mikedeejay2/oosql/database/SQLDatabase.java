@@ -318,4 +318,20 @@ public class SQLDatabase implements SQLDatabaseInterface
     {
         return tableExists(table.getName());
     }
+
+    @Override
+    public int getTablesAmount()
+    {
+        try
+        {
+            ResultSet result = getMetaData().getTables(null, null, null, null);
+            ResultSetMetaData meta = result.getMetaData();
+            return meta.getColumnCount();
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return 0;
+    }
 }

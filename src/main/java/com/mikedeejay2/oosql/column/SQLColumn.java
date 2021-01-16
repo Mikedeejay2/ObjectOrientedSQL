@@ -1,19 +1,16 @@
 package com.mikedeejay2.oosql.column;
 
 import com.mikedeejay2.oosql.database.SQLDatabase;
-import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 import com.mikedeejay2.oosql.table.SQLTable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SQLColumn implements SQLColumnInterface
 {
-    protected SQLDatabase database;
-    protected SQLTable table;
+    protected final SQLDatabase database;
+    protected final SQLTable table;
     protected String name;
 
     public SQLColumn(SQLTable parentTable, String name)

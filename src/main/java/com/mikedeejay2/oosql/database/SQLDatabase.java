@@ -78,7 +78,7 @@ public class SQLDatabase implements SQLDatabaseInterface
     }
 
     @Override
-    public SQLType getType()
+    public SQLType getConnectionType()
     {
         return connectionData.getType();
     }

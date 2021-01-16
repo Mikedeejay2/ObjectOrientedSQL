@@ -24,7 +24,7 @@ interface SQLDatabaseInterface extends SQLObject
 
     Connection getConnection();
 
-    SQLType getType();
+    SQLType getConnectionType();
 
     String getName();
 

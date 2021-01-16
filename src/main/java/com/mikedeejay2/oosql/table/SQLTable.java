@@ -133,4 +133,19 @@ public class SQLTable implements SQLTableInterface
     {
         return columnExists(column.getName());
     }
+
+    @Override
+    public int getColumnsAmount()
+    {
+        try
+        {
+            ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
+            return result.getFetchSize();
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return 0;
+    }
 }

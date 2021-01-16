@@ -7,17 +7,43 @@ import com.mikedeejay2.oosql.table.SQLTable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * A column of a <tt>SQLTable</tt>.
+ * <p>
+ * Instances of <tt>SQLColumn</tt> should <b>ONLY</b> be obtained by using
+ * {@link SQLTable#getColumn(String)} or similar.
+ * <p>
+ * Constructing this by using {@link SQLColumn#SQLColumn(SQLTable, String)} is unsafe and
+ * could lead to errors. However, if <b>absolutely necessary</b>, a <tt>SQLColumn</tt> can
+ * still be constructed independently from a table. All information provided to a constructor
+ * must be accurate. If not, errors can and will occur.
+ *
+ * @see SQLTable
+ * @author Mikedeejay2
+ */
 public class SQLColumn implements SQLColumnInterface
 {
+    // A reference to the parent database
     protected final SQLDatabase database;
+    // A reference to the parent table
     protected final SQLTable table;
-    protected String name;
+    // The name of the column
+    protected String columnName;
 
-    public SQLColumn(SQLTable parentTable, String name)
+    /**
+     * Constructor for a column. Constructing this by using this constructor is unsafe and
+     * could lead to errors. However, if <b>absolutely necessary</b>, a <tt>SQLColumn</tt> can
+     * still be constructed independently from a table. All information provided to this constructor
+     * must be accurate. If not, errors can and will occur.
+     *
+     * @param parentTable A reference to the parent table
+     * @param columnName The name of the column
+     */
+    public SQLColumn(SQLTable parentTable, String columnName)
     {
         this.table = parentTable;
         this.database = parentTable.getDatabase();
-        this.name = name;
+        this.columnName = columnName;
     }
 
     @Override
@@ -42,7 +68,7 @@ public class SQLColumn implements SQLColumnInterface
     @Override
     public String getName()
     {
-        return name;
+        return columnName;
     }
 
     @Override
@@ -61,7 +87,7 @@ public class SQLColumn implements SQLColumnInterface
     {
         try
         {
-            ResultSet result = database.getMetaData().getColumns(null, null, table.getName(), name);
+            ResultSet result = database.getMetaData().getColumns(null, null, table.getName(), columnName);
             return result.getString(metaType.toString());
         }
         catch(SQLException throwables)
@@ -76,7 +102,7 @@ public class SQLColumn implements SQLColumnInterface
     {
         try
         {
-            ResultSet result = database.getMetaData().getColumns(null, null, table.getName(), name);
+            ResultSet result = database.getMetaData().getColumns(null, null, table.getName(), columnName);
             return result.getInt(metaType.toString());
         }
         catch(SQLException throwables)
@@ -92,7 +118,7 @@ public class SQLColumn implements SQLColumnInterface
 
         try
         {
-            ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), name);
+            ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), columnName);
             return resultCol.getString(SQLColumnMeta.IS_NULLABLE.toString()).equals("YES");
         }
         catch(SQLException throwables)
@@ -111,7 +137,7 @@ public class SQLColumn implements SQLColumnInterface
             while(resultPrimary.next())
             {
                 String curName = resultPrimary.getString(SQLColumnMeta.COLUMN_NAME.toString());
-                if(name.equals(curName))
+                if(columnName.equals(curName))
                 {
                     return true;
                 }
@@ -133,7 +159,7 @@ public class SQLColumn implements SQLColumnInterface
             while(resultForeign.next())
             {
                 String curName = resultForeign.getString(SQLColumnMeta.COLUMN_NAME.toString());
-                if(name.equals(curName))
+                if(columnName.equals(curName))
                 {
                     return true;
                 }
@@ -151,7 +177,7 @@ public class SQLColumn implements SQLColumnInterface
     {
         try
         {
-            ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), name);
+            ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), columnName);
             return resultCol.getString(SQLColumnMeta.COLUMN_DEF.toString()) != null;
         }
         catch(SQLException throwables)
@@ -166,7 +192,7 @@ public class SQLColumn implements SQLColumnInterface
     {
         try
         {
-            ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), name);
+            ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), columnName);
             return resultCol.getString(SQLColumnMeta.IS_AUTOINCREMENT.toString()).equals("YES");
         }
         catch(SQLException throwables)

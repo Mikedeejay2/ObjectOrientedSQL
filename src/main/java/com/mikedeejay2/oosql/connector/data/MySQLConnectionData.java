@@ -70,4 +70,10 @@ public class MySQLConnectionData extends SQLConnectionData
     {
         this.useSSL = useSSL;
     }
+
+    @Override
+    public String toString()
+    {
+        return dbName + ", " + username + ":" + password + ", " + host + ":" + port;
+    }
 }

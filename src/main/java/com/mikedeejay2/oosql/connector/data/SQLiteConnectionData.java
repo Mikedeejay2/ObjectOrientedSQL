@@ -24,4 +24,10 @@ public class SQLiteConnectionData extends SQLConnectionData
     {
         this.dbFile = dbFile;
     }
+
+    @Override
+    public String toString()
+    {
+        return dbName + ", " + dbFile.getPath();
+    }
 }

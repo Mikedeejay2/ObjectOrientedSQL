@@ -320,13 +320,23 @@ public class SQLDatabase implements SQLDatabaseInterface
     }
 
     @Override
-    public int getTablesAmount()
+    public int getTablesAmount(SQLTableType... types)
     {
+        String[] typesStrs = null;
+        if(types != null)
+        {
+            typesStrs = new String[types.length];
+            for(int i = 0; i < types.length; ++i)
+            {
+                typesStrs[i] = types[i].get();
+            }
+        }
+
         try
         {
-            ResultSet result = getMetaData().getTables(null, null, null, null);
-            ResultSetMetaData meta = result.getMetaData();
-            return meta.getColumnCount();
+            ResultSet result = this.getMetaData().getTables(null, null, null, typesStrs);
+            result.last();
+            return result.getRow();
         }
         catch(SQLException throwables)
         {

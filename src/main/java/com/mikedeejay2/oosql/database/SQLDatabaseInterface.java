@@ -54,5 +54,5 @@ interface SQLDatabaseInterface extends SQLObject
 
     boolean tableExists(SQLTable table);
 
-    int getTablesAmount();
+    int getTablesAmount(SQLTableType... types);
 }

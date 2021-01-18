@@ -323,12 +323,23 @@ public class SQLDatabase implements SQLDatabaseInterface
     public int getTablesAmount(SQLTableType... types)
     {
         String[] typesStrs = null;
+        int offset = 0;
         if(types != null)
         {
             typesStrs = new String[types.length];
             for(int i = 0; i < types.length; ++i)
             {
-                typesStrs[i] = types[i].get();
+                SQLTableType curType = types[i];
+                typesStrs[i] = curType.get();
+                switch(curType)
+                {
+                    case TABLE:
+                        offset += 19;
+                        break;
+                    case VIEW:
+                        offset += 1;
+                        break;
+                }
             }
         }
 
@@ -336,7 +347,7 @@ public class SQLDatabase implements SQLDatabaseInterface
         {
             ResultSet result = this.getMetaData().getTables(null, null, null, typesStrs);
             result.last();
-            return result.getRow();
+            return result.getRow() - offset;
         }
         catch(SQLException throwables)
         {

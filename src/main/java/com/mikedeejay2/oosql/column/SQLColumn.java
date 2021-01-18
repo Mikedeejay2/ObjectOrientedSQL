@@ -88,7 +88,7 @@ public class SQLColumn implements SQLColumnInterface
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, table.getName(), columnName);
-            return result.getString(metaType.toString());
+            return result.getString(metaType.asString());
         }
         catch(SQLException throwables)
         {
@@ -103,7 +103,7 @@ public class SQLColumn implements SQLColumnInterface
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, table.getName(), columnName);
-            return result.getInt(metaType.toString());
+            return result.getInt(metaType.asString());
         }
         catch(SQLException throwables)
         {
@@ -119,7 +119,7 @@ public class SQLColumn implements SQLColumnInterface
         try
         {
             ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), columnName);
-            return resultCol.getString(SQLColumnMeta.IS_NULLABLE.toString()).equals("YES");
+            return resultCol.getString(SQLColumnMeta.IS_NULLABLE.asString()).equals("YES");
         }
         catch(SQLException throwables)
         {
@@ -136,7 +136,7 @@ public class SQLColumn implements SQLColumnInterface
             ResultSet resultPrimary = database.getMetaData().getPrimaryKeys(null, null, table.getName());
             while(resultPrimary.next())
             {
-                String curName = resultPrimary.getString(SQLColumnMeta.COLUMN_NAME.toString());
+                String curName = resultPrimary.getString(SQLColumnMeta.COLUMN_NAME.asString());
                 if(columnName.equals(curName))
                 {
                     return true;
@@ -158,7 +158,7 @@ public class SQLColumn implements SQLColumnInterface
             ResultSet resultForeign = database.getMetaData().getImportedKeys(null, null, table.getName());
             while(resultForeign.next())
             {
-                String curName = resultForeign.getString(SQLColumnMeta.COLUMN_NAME.toString());
+                String curName = resultForeign.getString(SQLColumnMeta.COLUMN_NAME.asString());
                 if(columnName.equals(curName))
                 {
                     return true;
@@ -178,7 +178,7 @@ public class SQLColumn implements SQLColumnInterface
         try
         {
             ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), columnName);
-            return resultCol.getString(SQLColumnMeta.COLUMN_DEF.toString()) != null;
+            return resultCol.getString(SQLColumnMeta.COLUMN_DEF.asString()) != null;
         }
         catch(SQLException throwables)
         {
@@ -193,7 +193,7 @@ public class SQLColumn implements SQLColumnInterface
         try
         {
             ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), columnName);
-            return resultCol.getString(SQLColumnMeta.IS_AUTOINCREMENT.toString()).equals("YES");
+            return resultCol.getString(SQLColumnMeta.IS_AUTOINCREMENT.asString()).equals("YES");
         }
         catch(SQLException throwables)
         {

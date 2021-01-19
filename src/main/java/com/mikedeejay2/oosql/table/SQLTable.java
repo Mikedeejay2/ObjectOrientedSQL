@@ -47,7 +47,7 @@ public class SQLTable implements SQLTableInterface
         {
             ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
             result.absolute(index);
-            String columnName = result.getString(SQLColumnMeta.COLUMN_NAME.asString());
+            String columnName = result.getString(SQLColumnMeta.COLUMN_NAME.asIndex());
             return getColumn(columnName);
         }
         catch(SQLException throwables)
@@ -66,7 +66,7 @@ public class SQLTable implements SQLTableInterface
             ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
             while(result.next())
             {
-                String columnName = result.getString(SQLColumnMeta.COLUMN_NAME.asString());
+                String columnName = result.getString(SQLColumnMeta.COLUMN_NAME.asIndex());
                 SQLColumn column = new SQLColumn(this, columnName);
                 columns.add(column);
             }
@@ -105,7 +105,7 @@ public class SQLTable implements SQLTableInterface
         try
         {
             ResultSet result = database.getMetaData().getTables(null, null, tableName, null);
-            return result.getString(metaType.asString());
+            return result.getString(metaType.asIndex());
         }
         catch(SQLException throwables)
         {

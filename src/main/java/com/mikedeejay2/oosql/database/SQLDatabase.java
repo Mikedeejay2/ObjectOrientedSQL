@@ -286,7 +286,7 @@ public class SQLDatabase implements SQLDatabaseInterface
             ResultSet result = this.getMetaData().getTables(null, null, null, new String[]{type.get()});
             while(result.next())
             {
-                String tableName = result.getString(SQLTableMeta.TABLE_NAME.asString());
+                String tableName = result.getString(SQLTableMeta.TABLE_NAME.asIndex());
                 SQLTable table = new SQLTable(this, tableName);
                 tables.add(table);
             }
@@ -337,6 +337,7 @@ public class SQLDatabase implements SQLDatabaseInterface
         {
             ResultSet result = this.getMetaData().getTables(null, null, null, typesStrs);
             result.last();
+            return result.getRow();
         }
         catch(SQLException throwables)
         {

@@ -105,7 +105,10 @@ public class SQLTable implements SQLTableInterface
         try
         {
             ResultSet result = database.getMetaData().getTables(null, null, tableName, null);
-            return result.getString(metaType.asIndex());
+            if(result.next())
+            {
+                return result.getString(metaType.asIndex());
+            }
         }
         catch(SQLException throwables)
         {

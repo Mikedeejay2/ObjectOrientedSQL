@@ -121,17 +121,7 @@ public class SQLColumn implements SQLColumnInterface
     @Override
     public boolean isNullable()
     {
-
-        try
-        {
-            ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), columnName);
-            return resultCol.getString(SQLColumnMeta.IS_NULLABLE.asIndex()).equals("YES");
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-        }
-        return false;
+        return getMetaString(SQLColumnMeta.IS_NULLABLE).equals("YES");
     }
 
     @Override
@@ -181,30 +171,12 @@ public class SQLColumn implements SQLColumnInterface
     @Override
     public boolean hasDefault()
     {
-        try
-        {
-            ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), columnName);
-            return resultCol.getString(SQLColumnMeta.COLUMN_DEF.asIndex()) != null;
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-        }
-        return false;
+        return getMetaString(SQLColumnMeta.COLUMN_DEF) != null;
     }
 
     @Override
     public boolean autoIncrements()
     {
-        try
-        {
-            ResultSet resultCol = database.getMetaData().getColumns(null, null, table.getName(), columnName);
-            return resultCol.getString(SQLColumnMeta.IS_AUTOINCREMENT.asIndex()).equals("YES");
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-        }
-        return false;
+        return getMetaString(SQLColumnMeta.IS_AUTOINCREMENT).equals("YES");
     }
 }

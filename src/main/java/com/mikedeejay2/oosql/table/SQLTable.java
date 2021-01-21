@@ -160,7 +160,10 @@ public class SQLTable implements SQLTableInterface
         try
         {
             ResultSet result = database.executeQuery("SELECT COUNT(*) FROM `" + tableName + "`");
-            return result.getInt(1);
+            if(result.next())
+            {
+                return result.getInt(1);
+            }
         }
         catch(SQLException throwables)
         {

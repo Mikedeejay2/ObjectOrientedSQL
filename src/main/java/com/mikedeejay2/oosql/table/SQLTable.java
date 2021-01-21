@@ -144,8 +144,8 @@ public class SQLTable implements SQLTableInterface
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
-            ResultSetMetaData meta = result.getMetaData();
-            return meta.getColumnCount();
+            result.last();
+            return result.getRow();
         }
         catch(SQLException throwables)
         {

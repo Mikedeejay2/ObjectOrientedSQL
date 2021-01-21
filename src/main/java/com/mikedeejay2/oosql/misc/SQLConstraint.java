@@ -13,7 +13,7 @@ public enum SQLConstraint
     // Ensures that all records in a column pass a condition
     CHECK("CHECK", true, true),
     // Sets a default value for a column when no value is specified
-    DEFAULT("DEFAULT"),
+    DEFAULT("DEFAULT", false, true),
     // Whether to auto increment the column
     AUTO_INCREMENT("AUTO_INCREMENT")
     ;

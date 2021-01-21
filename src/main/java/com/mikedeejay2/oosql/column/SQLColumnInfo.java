@@ -9,9 +9,9 @@ public class SQLColumnInfo
     protected final String name;
     protected final int[] sizes;
     protected final SQLConstraint[] constraints;
-    protected final String extra;
+    protected final String[] extra;
 
-    public SQLColumnInfo(SQLDataType type, String name, int[] sizes, SQLConstraint[] constraints, String extra)
+    public SQLColumnInfo(SQLDataType type, String name, int[] sizes, SQLConstraint[] constraints, String... extra)
     {
         this.type = type;
         this.name = name;
@@ -40,7 +40,7 @@ public class SQLColumnInfo
         return constraints;
     }
 
-    public String getExtra()
+    public String[] getExtra()
     {
         return extra;
     }

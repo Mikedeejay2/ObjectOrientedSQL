@@ -114,13 +114,15 @@ public class SQLDatabase implements SQLDatabaseInterface
 
         List<Map.Entry<SQLConstraint, SQLColumnInfo>> endConstraints = new ArrayList<>();
 
+        int extraIndex = 0;
+
         for(int index = 0; index < info.length; ++index)
         {
             SQLColumnInfo curInfo = info[index];
             String name = curInfo.getName();
             SQLConstraint[] constraints = curInfo.getConstraints();
-            int[]       sizes = curInfo.getSizes();
-            SQLDataType type  = curInfo.getType();
+            int[] sizes = curInfo.getSizes();
+            SQLDataType type = curInfo.getType();
 
             builder.append("`")
                    .append(name)
@@ -149,6 +151,26 @@ public class SQLDatabase implements SQLDatabaseInterface
                 builder.append(" ");
                 String constraintStr = constraint.get();
                 builder.append(constraintStr);
+
+                if(constraint.useExtra())
+                {
+                    String extraStr = curInfo.getExtra()[extraIndex];
+                    ++extraIndex;
+                    builder.append(" ");
+                    boolean encase;
+                    try
+                    {
+                        double numTest = Double.parseDouble(extraStr);
+                        encase = false;
+                    }
+                    catch(NumberFormatException e)
+                    {
+                        encase = true;
+                    }
+                    if(encase) builder.append("'");
+                    builder.append(extraStr);
+                    if(encase) builder.append("'");
+                }
             }
 
             if(index != info.length - 1) builder.append(", ");
@@ -158,7 +180,8 @@ public class SQLDatabase implements SQLDatabaseInterface
         {
             SQLConstraint constraint = entry.getKey();
             SQLColumnInfo curInfo = entry.getValue();
-            String data = constraint.useExtra() ? curInfo.getExtra() : "`" + curInfo.getName() + "`";
+            String data = constraint.useExtra() ? curInfo.getExtra()[extraIndex] : "`" + curInfo.getName() + "`";
+            ++extraIndex;
             String name = constraint.get();
             builder.append(", ")
                    .append(name)

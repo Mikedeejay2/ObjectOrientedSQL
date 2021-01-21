@@ -88,7 +88,10 @@ public class SQLColumn implements SQLColumnInterface
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, table.getName(), columnName);
-            return result.getString(metaType.asIndex());
+            if(result.next())
+            {
+                return result.getString(metaType.asIndex());
+            }
         }
         catch(SQLException throwables)
         {
@@ -103,7 +106,10 @@ public class SQLColumn implements SQLColumnInterface
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, table.getName(), columnName);
-            return result.getInt(metaType.asIndex());
+            if(result.next())
+            {
+                return result.getInt(metaType.asIndex());
+            }
         }
         catch(SQLException throwables)
         {

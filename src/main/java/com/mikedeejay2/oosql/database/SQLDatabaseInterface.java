@@ -6,7 +6,6 @@ import com.mikedeejay2.oosql.connector.SQLConnection;
 import com.mikedeejay2.oosql.connector.data.SQLConnectionData;
 import com.mikedeejay2.oosql.misc.SQLType;
 import com.mikedeejay2.oosql.table.SQLTable;
-import com.mikedeejay2.oosql.table.SQLTableType;
 
 import java.sql.*;
 
@@ -35,14 +34,4 @@ interface SQLDatabaseInterface extends SQLObject
     SQLTable createTable(String tableName, SQLColumnInfo... info);
 
     boolean removeTable(String tableName);
-
-    DatabaseMetaData getMetaData();
-
-    SQLTable[] getTables(SQLTableType type);
-
-    boolean tableExists(String tableName);
-
-    boolean tableExists(SQLTable table);
-
-    int getTablesAmount(SQLTableType... types);
 }

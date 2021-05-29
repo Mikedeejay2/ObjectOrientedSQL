@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLTable implements SQLTableInterface
+public class SQLTable implements SQLTableInterface, SQLTableMetaData
 {
     protected final SQLDatabase database;
     protected final SQLExecutor executor;
@@ -29,7 +29,7 @@ public class SQLTable implements SQLTableInterface
     @Override
     public boolean renameTable(String newName)
     {
-        String command = "ALTER TABLE `" + tableName + "` RENAME TO `" + newName + "`";
+        String command = generator.renameTable(tableName, newName);
         int code = database.getExecutor().executeUpdate(command);
         this.tableName = newName;
         return code != -1;

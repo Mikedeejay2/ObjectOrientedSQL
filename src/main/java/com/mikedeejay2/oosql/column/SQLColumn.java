@@ -21,7 +21,7 @@ import java.sql.SQLException;
  * @see SQLTable
  * @author Mikedeejay2
  */
-public class SQLColumn implements SQLColumnInterface
+public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
 {
     // A reference to the parent database
     protected final SQLDatabase database;

@@ -12,21 +12,7 @@ public interface SQLTableInterface extends SQLObject
 
     SQLColumn getColumn(int index);
 
-    SQLColumn[] getColumns();
-
     SQLDatabase getDatabase();
 
     String getName();
-
-    SQLTableType getTableType();
-
-    String getMeta(SQLTableMeta metaType);
-
-    boolean columnExists(String columnName);
-
-    boolean columnExists(SQLColumn column);
-
-    int getColumnsAmount();
-
-    int getRowsAmount();
 }

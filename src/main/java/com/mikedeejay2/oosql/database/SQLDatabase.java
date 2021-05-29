@@ -19,7 +19,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLDatabase implements SQLDatabaseInterface
+public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
 {
     protected SQLConnection connection;
     protected SQLConnectionData connectionData;

@@ -42,7 +42,7 @@ public class SimpleSQLGenerator implements SQLGenerator
                 .append("` ")
                 .append(type.getName());
 
-            if(sizes.length > 0)
+            if(sizes != null && sizes.length > 0)
             {
                 builder.append("(");
                 for(int sizeI = 0; sizeI < sizes.length; ++sizeI)
@@ -105,24 +105,38 @@ public class SimpleSQLGenerator implements SQLGenerator
 
         if(info.length > 0) builder.append(")");
 
+        builder.append(";");
+
         return builder.toString();
     }
 
     @Override
     public String dropTable(String tableName)
     {
-        return "DROP TABLE `" + tableName + "`";
+        return "DROP TABLE `" + tableName + "`;";
     }
 
     @Override
     public String renameTable(String tableName, String newName)
     {
-        return "ALTER TABLE `" + tableName + "` RENAME TO `" + newName + "`";
+        return "ALTER TABLE `" + tableName + "` RENAME TO `" + newName + "`;";
     }
 
     @Override
     public String countRows(String tableName)
     {
-        return "SELECT COUNT(*) FROM `" + tableName + "`";
+        return "SELECT COUNT(*) FROM `" + tableName + "`;";
+    }
+
+    @Override
+    public String dropDatabase(String databaseName)
+    {
+        return "DROP DATABASE `" + databaseName + "`;";
+    }
+
+    @Override
+    public String createDatabase(String databaseName)
+    {
+        return "CREATE DATABASE `" + databaseName + "`;";
     }
 }

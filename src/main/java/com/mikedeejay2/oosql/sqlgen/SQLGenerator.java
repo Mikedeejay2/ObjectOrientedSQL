@@ -11,4 +11,8 @@ public interface SQLGenerator
     String renameTable(String tableName, String newName);
 
     String countRows(String tableName);
+
+    String dropDatabase(String databaseName);
+
+    String createDatabase(String databaseName);
 }

@@ -17,6 +17,8 @@ interface SQLDatabaseInterface extends SQLObject
 
     boolean disconnect(boolean throwErrors);
 
+    boolean reconnect(boolean throwErrors);
+
     boolean isConnected();
 
     SQLConnection getSQLConnection();
@@ -33,5 +35,13 @@ interface SQLDatabaseInterface extends SQLObject
 
     SQLTable createTable(String tableName, SQLColumnInfo... info);
 
-    boolean removeTable(String tableName);
+    boolean dropTable(String tableName);
+
+    boolean wipeDatabase();
+
+    boolean createDatabase();
+
+    boolean dropDatabase();
+
+    boolean exists();
 }

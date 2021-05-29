@@ -9,8 +9,8 @@ import com.mikedeejay2.oosql.connector.data.SQLConnectionData;
 import com.mikedeejay2.oosql.connector.data.SQLiteConnectionData;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
 import com.mikedeejay2.oosql.misc.SQLType;
+import com.mikedeejay2.oosql.sqlgen.DebugSQLGenerator;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
-import com.mikedeejay2.oosql.sqlgen.SimpleSQLGenerator;
 import com.mikedeejay2.oosql.table.SQLTable;
 import com.mikedeejay2.oosql.table.SQLTableMeta;
 import com.mikedeejay2.oosql.table.SQLTableType;
@@ -29,7 +29,7 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     public SQLDatabase(SQLConnectionData data)
     {
         this.connectionData = data;
-        this.generator = new SimpleSQLGenerator();
+        this.generator = new DebugSQLGenerator();
         this.executor = new SQLExecutor();
     }
 
@@ -47,9 +47,11 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
         {
             case MYSQL:
                 if(connection == null) this.connection = new MySQLConnection((MySQLConnectionData) connectionData);
+                executor.setSQLConnection(connection);
                 return connection.connect(throwErrors);
             case SQLITE:
                 if(connection == null) this.connection = new SQLiteConnection((SQLiteConnectionData) connectionData);
+                executor.setSQLConnection(connection);
                 return connection.connect(throwErrors);
         }
         return false;
@@ -60,6 +62,13 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     {
         if(!isConnected()) return false;
         return connection.disconnect(throwErrors);
+    }
+
+    @Override
+    public boolean reconnect(boolean throwErrors)
+    {
+        if(!isConnected()) return connect(throwErrors);
+        return disconnect(throwErrors) && connect(throwErrors);
     }
 
     @Override
@@ -118,11 +127,43 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     }
 
     @Override
-    public boolean removeTable(String tableName)
+    public boolean dropTable(String tableName)
     {
         String command = generator.dropTable(tableName);
         int code = executor.executeUpdate(command);
         return code != -1;
+    }
+
+    @Override
+    public boolean wipeDatabase()
+    {
+        return dropDatabase() && createDatabase();
+    }
+
+    @Override
+    public boolean createDatabase()
+    {
+        String command = generator.createDatabase(getName());
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean dropDatabase()
+    {
+        String command = generator.dropDatabase(getName());
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean exists()
+    {
+        for(String catalog : getCatalogs())
+        {
+            if(getName().equals(catalog)) return true;
+        }
+        return false;
     }
 
     @Override
@@ -140,12 +181,42 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     }
 
     @Override
-    public SQLTable[] getTables(SQLTableType type)
+    public String[] getCatalogs()
     {
+        List<String> catalogsList = new ArrayList<>();
+        try
+        {
+            ResultSet catalogs = getMetaData().getCatalogs();
+            while(catalogs.next())
+            {
+                catalogsList.add(catalogs.getString(1));
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+
+        return catalogsList.toArray(new String[0]);
+    }
+
+    @Override
+    public SQLTable[] getTables(SQLTableType... types)
+    {
+        String[] typeStrs = null;
+
+        if(types != null)
+        {
+            typeStrs = new String[types.length];
+            for(int i = 0; i < typeStrs.length; ++i)
+            {
+                typeStrs[i] = types[i].get();
+            }
+        }
         List<SQLTable> tables = new ArrayList<>();
         try
         {
-            ResultSet result = this.getMetaData().getTables(null, null, null, new String[]{type.get()});
+            ResultSet result = this.getMetaData().getTables(null, null, null, typeStrs);
             while(result.next())
             {
                 String tableName = result.getString(SQLTableMeta.TABLE_NAME.asIndex());
@@ -158,6 +229,36 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
             throwables.printStackTrace();
         }
         return tables.toArray(new SQLTable[0]);
+    }
+
+    @Override
+    public String[] getTableNames(SQLTableType... types)
+    {
+        String[] typeStrs = null;
+
+        if(types != null)
+        {
+            typeStrs = new String[types.length];
+            for(int i = 0; i < typeStrs.length; ++i)
+            {
+                typeStrs[i] = types[i].get();
+            }
+        }
+        List<String> tables = new ArrayList<>();
+        try
+        {
+            ResultSet result = this.getMetaData().getTables(null, null, null, typeStrs);
+            while(result.next())
+            {
+                String tableName = result.getString(SQLTableMeta.TABLE_NAME.asIndex());
+                tables.add(tableName);
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return tables.toArray(new String[0]);
     }
 
     @Override
@@ -206,6 +307,12 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
             throwables.printStackTrace();
         }
         return 0;
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        return getTablesAmount() == 0;
     }
 
     public SQLGenerator getGenerator()

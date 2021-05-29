@@ -20,6 +20,36 @@ public class SQLColumnInfo
         this.extra = extra;
     }
 
+    public SQLColumnInfo(SQLDataType type, String name, int size, SQLConstraint[] constraints, String... extra)
+    {
+        this(type, name, new int[]{size}, constraints, extra);
+    }
+
+    public SQLColumnInfo(SQLDataType type, String name, SQLConstraint[] constraints, String... extra)
+    {
+        this(type, name, new int[]{}, constraints, extra);
+    }
+
+    public SQLColumnInfo(SQLDataType type, String name, int size, SQLConstraint constraint, String... extra)
+    {
+        this(type, name, new int[]{size}, new SQLConstraint[]{constraint}, extra);
+    }
+
+    public SQLColumnInfo(SQLDataType type, String name, SQLConstraint constraint, String... extra)
+    {
+        this(type, name, new int[]{}, new SQLConstraint[]{constraint}, extra);
+    }
+
+    public SQLColumnInfo(SQLDataType type, String name, int size, String... extra)
+    {
+        this(type, name, new int[]{size}, new SQLConstraint[]{}, extra);
+    }
+
+    public SQLColumnInfo(SQLDataType type, String name, String... extra)
+    {
+        this(type, name, new int[]{}, new SQLConstraint[]{}, extra);
+    }
+
     public SQLDataType getType()
     {
         return type;

@@ -9,11 +9,17 @@ public interface SQLDatabaseMetaData
 {
     DatabaseMetaData getMetaData();
 
-    SQLTable[] getTables(SQLTableType type);
+    String[] getCatalogs();
+
+    SQLTable[] getTables(SQLTableType... types);
+
+    String[] getTableNames(SQLTableType... types);
 
     boolean tableExists(String tableName);
 
     boolean tableExists(SQLTable table);
 
     int getTablesAmount(SQLTableType... types);
+
+    boolean isEmpty();
 }

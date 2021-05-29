@@ -33,7 +33,13 @@
     </distributionManagement>
 
     <build>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -123,4 +129,31 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <name>Jetbrains Annotations Repository</name>
+            <id>jetbrains-annotations</id>
+            <url>https://mvnrepository.com/artifact/org.jetbrains/annotations</url>
+        </repository>
+        <repository>
+            <name>JUnit Jupiter Repository</name>
+            <id>junit-jupiter</id>
+            <url>https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>21.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.7.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

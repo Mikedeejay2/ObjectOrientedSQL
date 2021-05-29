@@ -7,27 +7,30 @@ import com.mikedeejay2.oosql.connector.SQLiteConnection;
 import com.mikedeejay2.oosql.connector.data.MySQLConnectionData;
 import com.mikedeejay2.oosql.connector.data.SQLConnectionData;
 import com.mikedeejay2.oosql.connector.data.SQLiteConnectionData;
-import com.mikedeejay2.oosql.misc.SQLConstraint;
-import com.mikedeejay2.oosql.misc.SQLDataType;
+import com.mikedeejay2.oosql.execution.SQLExecutor;
 import com.mikedeejay2.oosql.misc.SQLType;
+import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
+import com.mikedeejay2.oosql.sqlgen.SimpleSQLGenerator;
 import com.mikedeejay2.oosql.table.SQLTable;
 import com.mikedeejay2.oosql.table.SQLTableMeta;
 import com.mikedeejay2.oosql.table.SQLTableType;
 
 import java.sql.*;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class SQLDatabase implements SQLDatabaseInterface
 {
     protected SQLConnection connection;
     protected SQLConnectionData connectionData;
+    protected SQLGenerator generator;
+    protected SQLExecutor executor;
 
     public SQLDatabase(SQLConnectionData data)
     {
         this.connectionData = data;
+        this.generator = new SimpleSQLGenerator();
+        this.executor = new SQLExecutor();
     }
 
     @Override
@@ -105,98 +108,9 @@ public class SQLDatabase implements SQLDatabaseInterface
     @Override
     public SQLTable createTable(String tableName, SQLColumnInfo... info)
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append("CREATE TABLE `")
-               .append(tableName)
-               .append("`");
+        String command = generator.createTable(tableName, info);
 
-        if(info.length > 0) builder.append(" (");
-
-        List<Map.Entry<SQLConstraint, SQLColumnInfo>> endConstraints = new ArrayList<>();
-
-        int extraIndex = 0;
-
-        for(int index = 0; index < info.length; ++index)
-        {
-            SQLColumnInfo curInfo = info[index];
-            String name = curInfo.getName();
-            SQLConstraint[] constraints = curInfo.getConstraints();
-            int[] sizes = curInfo.getSizes();
-            SQLDataType type = curInfo.getType();
-
-            builder.append("`")
-                   .append(name)
-                   .append("` ")
-                   .append(type.getName());
-
-            if(sizes.length > 0)
-            {
-                builder.append("(");
-                for(int sizeI = 0; sizeI < sizes.length; ++sizeI)
-                {
-                    builder.append(sizes[sizeI]);
-                    if(sizeI != sizes.length - 1) builder.append(", ");
-                }
-                builder.append(")");
-            }
-
-            for(SQLConstraint constraint : constraints)
-            {
-                if(constraint.atEnd())
-                {
-                    endConstraints.add(new AbstractMap.SimpleEntry<>(constraint, curInfo));
-                    continue;
-                }
-
-                builder.append(" ");
-                String constraintStr = constraint.get();
-                builder.append(constraintStr);
-
-                if(constraint.useExtra())
-                {
-                    String extraStr = curInfo.getExtra()[extraIndex];
-                    ++extraIndex;
-                    builder.append(" ");
-                    boolean encase;
-                    try
-                    {
-                        double numTest = Double.parseDouble(extraStr);
-                        encase = false;
-                    }
-                    catch(NumberFormatException e)
-                    {
-                        encase = true;
-                    }
-                    if(encase) builder.append("'");
-                    builder.append(extraStr);
-                    if(encase) builder.append("'");
-                }
-            }
-
-            if(index != info.length - 1) builder.append(", ");
-        }
-
-        for(Map.Entry<SQLConstraint, SQLColumnInfo> entry : endConstraints)
-        {
-            SQLConstraint constraint = entry.getKey();
-            SQLColumnInfo curInfo = entry.getValue();
-            String data = constraint.useExtra() ? curInfo.getExtra()[extraIndex] : "`" + curInfo.getName() + "`";
-            ++extraIndex;
-            String name = constraint.get();
-            builder.append(", ")
-                   .append(name)
-                   .append("(")
-                   .append(data)
-                   .append(")");
-        }
-
-        if(info.length > 0) builder.append(")");
-
-        String command = builder.toString();
-
-        System.out.println(command);
-
-        int code = executeUpdate(command);
+        int code = executor.executeUpdate(command);
         if(code == -1) return null;
 
         SQLTable table = new SQLTable(this, tableName);
@@ -206,84 +120,9 @@ public class SQLDatabase implements SQLDatabaseInterface
     @Override
     public boolean removeTable(String tableName)
     {
-
-        String command = "DROP TABLE `" + tableName + "`";
-        System.out.println(command);
-        int code = executeUpdate(command);
+        String command = generator.dropTable(tableName);
+        int code = executor.executeUpdate(command);
         return code != -1;
-    }
-
-    @Override
-    public int executeUpdate(String command)
-    {
-        try
-        {
-            PreparedStatement statement = prepareStatement(command);
-            return statement.executeUpdate();
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-            return -1;
-        }
-    }
-
-    @Override
-    public ResultSet executeQuery(String command)
-    {
-        try
-        {
-            PreparedStatement statement = prepareStatement(command);
-            return statement.executeQuery();
-
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public int executeUpdate(PreparedStatement statement)
-    {
-        try
-        {
-            return statement.executeUpdate();
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-            return -1;
-        }
-    }
-
-    @Override
-    public ResultSet executeQuery(PreparedStatement statement)
-    {
-        try
-        {
-            return statement.executeQuery();
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public PreparedStatement prepareStatement(String command)
-    {
-        try
-        {
-            return this.getConnection().prepareStatement(command);
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-            return null;
-        }
     }
 
     @Override
@@ -367,5 +206,15 @@ public class SQLDatabase implements SQLDatabaseInterface
             throwables.printStackTrace();
         }
         return 0;
+    }
+
+    public SQLGenerator getGenerator()
+    {
+        return generator;
+    }
+
+    public SQLExecutor getExecutor()
+    {
+        return executor;
     }
 }

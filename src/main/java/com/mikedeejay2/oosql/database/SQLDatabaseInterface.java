@@ -36,16 +36,6 @@ interface SQLDatabaseInterface extends SQLObject
 
     boolean removeTable(String tableName);
 
-    int executeUpdate(String command);
-
-    ResultSet executeQuery(String command);
-
-    int executeUpdate(PreparedStatement statement);
-
-    ResultSet executeQuery(PreparedStatement statement);
-
-    PreparedStatement prepareStatement(String command);
-
     DatabaseMetaData getMetaData();
 
     SQLTable[] getTables(SQLTableType type);

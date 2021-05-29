@@ -3,10 +3,10 @@ package com.mikedeejay2.oosql.table;
 import com.mikedeejay2.oosql.column.SQLColumn;
 import com.mikedeejay2.oosql.column.SQLColumnMeta;
 import com.mikedeejay2.oosql.database.SQLDatabase;
-import com.mikedeejay2.oosql.misc.SQLDataType;
+import com.mikedeejay2.oosql.execution.SQLExecutor;
+import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +14,15 @@ import java.util.List;
 public class SQLTable implements SQLTableInterface
 {
     protected final SQLDatabase database;
+    protected final SQLExecutor executor;
+    protected final SQLGenerator generator;
     protected String tableName;
 
     public SQLTable(SQLDatabase database, String tableName)
     {
         this.database = database;
+        this.executor = database.getExecutor();
+        this.generator = database.getGenerator();
         this.tableName = tableName;
     }
 
@@ -26,8 +30,7 @@ public class SQLTable implements SQLTableInterface
     public boolean renameTable(String newName)
     {
         String command = "ALTER TABLE `" + tableName + "` RENAME TO `" + newName + "`";
-        System.out.println(command);
-        int code = database.executeUpdate(command);
+        int code = database.getExecutor().executeUpdate(command);
         this.tableName = newName;
         return code != -1;
     }
@@ -159,7 +162,8 @@ public class SQLTable implements SQLTableInterface
     {
         try
         {
-            ResultSet result = database.executeQuery("SELECT COUNT(*) FROM `" + tableName + "`");
+            String command = generator.countRows(tableName);
+            ResultSet result = executor.executeQuery(command);
             if(result.next())
             {
                 return result.getInt(1);

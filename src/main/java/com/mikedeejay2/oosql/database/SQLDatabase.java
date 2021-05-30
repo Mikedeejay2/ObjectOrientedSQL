@@ -21,6 +21,7 @@ import java.util.List;
 
 public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
 {
+    protected String databaseName;
     protected SQLConnection connection;
     protected SQLConnectionData connectionData;
     protected SQLGenerator generator;
@@ -29,6 +30,7 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     public SQLDatabase(SQLConnectionData data)
     {
         this.connectionData = data;
+        this.databaseName = connectionData.getDBName();
         this.generator = new DebugSQLGenerator();
         this.executor = new SQLExecutor();
     }
@@ -98,7 +100,7 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     @Override
     public String getName()
     {
-        return connectionData.getDBName();
+        return databaseName;
     }
 
     @Override
@@ -143,7 +145,7 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     @Override
     public boolean createDatabase()
     {
-        String command = generator.createDatabase(getName());
+        String command = generator.createDatabase(databaseName);
         int code = executor.executeUpdate(command);
         return code != -1;
     }
@@ -151,7 +153,7 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     @Override
     public boolean dropDatabase()
     {
-        String command = generator.dropDatabase(getName());
+        String command = generator.dropDatabase(databaseName);
         int code = executor.executeUpdate(command);
         return code != -1;
     }
@@ -161,9 +163,19 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     {
         for(String catalog : getCatalogs())
         {
-            if(getName().equals(catalog)) return true;
+            if(databaseName.equals(catalog)) return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean renameDatabase(String newName)
+    {
+        String command = generator.renameDatabase(databaseName, newName);
+        int code = executor.executeUpdate(command);
+        connectionData.setDBName(newName);
+        this.databaseName = newName;
+        return code != -1;
     }
 
     @Override

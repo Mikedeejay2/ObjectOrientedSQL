@@ -139,4 +139,10 @@ public class SimpleSQLGenerator implements SQLGenerator
     {
         return "CREATE DATABASE `" + databaseName + "`;";
     }
+
+    @Override
+    public String renameDatabase(String databaseName, String newName)
+    {
+        return "RENAME DATABASE `" + databaseName + "` TO `" + newName + "`;";
+    }
 }

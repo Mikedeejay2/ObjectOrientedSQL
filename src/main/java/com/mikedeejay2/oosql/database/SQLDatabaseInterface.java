@@ -44,4 +44,6 @@ interface SQLDatabaseInterface extends SQLObject
     boolean dropDatabase();
 
     boolean exists();
+
+    boolean renameDatabase(String newName);
 }

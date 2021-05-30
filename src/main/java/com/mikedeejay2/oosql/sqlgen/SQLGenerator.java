@@ -15,4 +15,6 @@ public interface SQLGenerator
     String dropDatabase(String databaseName);
 
     String createDatabase(String databaseName);
+
+    String renameDatabase(String databaseName, String newName);
 }

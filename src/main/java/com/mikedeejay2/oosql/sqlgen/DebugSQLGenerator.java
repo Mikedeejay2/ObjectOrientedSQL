@@ -47,4 +47,10 @@ public class DebugSQLGenerator extends SimpleSQLGenerator
     {
         return print(super.createDatabase(databaseName));
     }
+
+    @Override
+    public String renameDatabase(String databaseName, String newName)
+    {
+        return print(super.renameDatabase(databaseName, newName));
+    }
 }

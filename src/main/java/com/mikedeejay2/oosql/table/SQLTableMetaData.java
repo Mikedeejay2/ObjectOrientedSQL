@@ -1,11 +1,10 @@
 package com.mikedeejay2.oosql.table;
 
 import com.mikedeejay2.oosql.column.SQLColumn;
+import com.mikedeejay2.oosql.column.SQLColumnInfo;
 
 public interface SQLTableMetaData
 {
-    SQLColumn[] getColumns();
-
     SQLTableType getTableType();
 
     String getMeta(SQLTableMeta metaType);
@@ -17,4 +16,8 @@ public interface SQLTableMetaData
     int getColumnsAmount();
 
     int getRowsAmount();
+
+    SQLTableInfo getInfo();
+
+    SQLColumnInfo[] getColumnInfos();
 }

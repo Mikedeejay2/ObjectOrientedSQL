@@ -7,8 +7,13 @@ import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 import com.mikedeejay2.oosql.table.SQLTable;
+import com.mikedeejay2.oosql.table.SQLTableInfo;
 import com.mikedeejay2.oosql.table.SQLTableType;
 import org.junit.jupiter.api.*;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -88,11 +93,31 @@ public class OOSQLTest
     public void testCreateTable()
     {
         database.createTable(
-            "test_table",
-            new SQLColumnInfo(SQLDataType.INTEGER, "id", new SQLConstraint[]{SQLConstraint.PRIMARY_KEY, SQLConstraint.AUTO_INCREMENT}),
-            new SQLColumnInfo(SQLDataType.VARCHAR, "name", 20, SQLConstraint.NOT_NULL),
-            new SQLColumnInfo(SQLDataType.VARCHAR, "username", 20, new SQLConstraint[]{SQLConstraint.UNIQUE, SQLConstraint.DEFAULT}, "ARandomUser")
-                            );
+            new SQLTableInfo(
+                "test_table",
+                new SQLColumnInfo[]{
+                    new SQLColumnInfo(
+                        SQLDataType.INTEGER,
+                        "id",
+                        new SQLConstraint[]{
+                            SQLConstraint.PRIMARY_KEY,
+                            SQLConstraint.AUTO_INCREMENT}),
+                    new SQLColumnInfo(
+                        SQLDataType.VARCHAR,
+                        "name",
+                        20,
+                        SQLConstraint.NOT_NULL),
+                    new SQLColumnInfo(
+                        SQLDataType.VARCHAR,
+                        "username",
+                        20,
+                        new SQLConstraint[]{
+                            SQLConstraint.UNIQUE,
+                            SQLConstraint.DEFAULT},
+                        "ARandomUser")},
+                null,
+                null
+        ));
 
         assertTrue(database.tableExists("test_table"));
     }
@@ -189,8 +214,8 @@ public class OOSQLTest
         SQLTable table = database.getTable("test_table");
         SQLColumn column1 = table.getColumn("name");
         SQLColumn column2 = table.getColumn("username");
-        assertFalse(column1.isNullable());
-        assertTrue(column2.isNullable());
+        assertTrue(column1.isNotNull());
+        assertFalse(column2.isNotNull());
     }
 
     @Test

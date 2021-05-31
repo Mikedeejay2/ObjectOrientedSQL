@@ -8,10 +8,12 @@ import com.mikedeejay2.oosql.connector.data.MySQLConnectionData;
 import com.mikedeejay2.oosql.connector.data.SQLConnectionData;
 import com.mikedeejay2.oosql.connector.data.SQLiteConnectionData;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
+import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLType;
 import com.mikedeejay2.oosql.sqlgen.DebugSQLGenerator;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
 import com.mikedeejay2.oosql.table.SQLTable;
+import com.mikedeejay2.oosql.table.SQLTableInfo;
 import com.mikedeejay2.oosql.table.SQLTableMeta;
 import com.mikedeejay2.oosql.table.SQLTableType;
 
@@ -117,14 +119,14 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     }
 
     @Override
-    public SQLTable createTable(String tableName, SQLColumnInfo... info)
+    public SQLTable createTable(SQLTableInfo info)
     {
-        String command = generator.createTable(tableName, info);
+        String command = generator.createTable(info);
 
         int code = executor.executeUpdate(command);
         if(code == -1) return null;
 
-        SQLTable table = new SQLTable(this, tableName);
+        SQLTable table = new SQLTable(this, info.getTableName());
         return table;
     }
 
@@ -225,7 +227,7 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
                 typeStrs[i] = types[i].get();
             }
         }
-        List<SQLTable> tables = new ArrayList<>();
+        SQLTable[] tables = new SQLTable[getTablesAmount(types)];
         try
         {
             ResultSet result = this.getMetaData().getTables(null, null, null, typeStrs);
@@ -233,14 +235,14 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
             {
                 String tableName = result.getString(SQLTableMeta.TABLE_NAME.asIndex());
                 SQLTable table = new SQLTable(this, tableName);
-                tables.add(table);
+                tables[result.getRow() - 1] = table;
             }
         }
         catch(SQLException throwables)
         {
             throwables.printStackTrace();
         }
-        return tables.toArray(new SQLTable[0]);
+        return tables;
     }
 
     @Override
@@ -256,21 +258,21 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
                 typeStrs[i] = types[i].get();
             }
         }
-        List<String> tables = new ArrayList<>();
+        String[] tables = new String[getTablesAmount(types)];
         try
         {
             ResultSet result = this.getMetaData().getTables(null, null, null, typeStrs);
             while(result.next())
             {
                 String tableName = result.getString(SQLTableMeta.TABLE_NAME.asIndex());
-                tables.add(tableName);
+                tables[result.getRow() - 1] = tableName;
             }
         }
         catch(SQLException throwables)
         {
             throwables.printStackTrace();
         }
-        return tables.toArray(new String[0]);
+        return tables;
     }
 
     @Override

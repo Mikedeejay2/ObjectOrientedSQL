@@ -1,44 +1,21 @@
 package com.mikedeejay2.oosql.column;
 
 import com.mikedeejay2.oosql.database.SQLDatabase;
+import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 import com.mikedeejay2.oosql.table.SQLTable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * A column of a <tt>SQLTable</tt>.
- * <p>
- * Instances of <tt>SQLColumn</tt> should <b>ONLY</b> be obtained by using
- * {@link SQLTable#getColumn(String)} or similar.
- * <p>
- * Constructing this by using {@link SQLColumn#SQLColumn(SQLTable, String)} is unsafe and
- * could lead to errors. However, if <b>absolutely necessary</b>, a <tt>SQLColumn</tt> can
- * still be constructed independently from a table. All information provided to a constructor
- * must be accurate. If not, errors can and will occur.
- *
- * @see SQLTable
- * @author Mikedeejay2
- */
 public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
 {
-    // A reference to the parent database
     protected final SQLDatabase database;
-    // A reference to the parent table
     protected final SQLTable table;
-    // The name of the column
     protected String columnName;
 
-    /**
-     * Constructor for a column. Constructing this by using this constructor is unsafe and
-     * could lead to errors. However, if <b>absolutely necessary</b>, a <tt>SQLColumn</tt> can
-     * still be constructed independently from a table. All information provided to this constructor
-     * must be accurate. If not, errors can and will occur.
-     *
-     * @param parentTable A reference to the parent table
-     * @param columnName The name of the column
-     */
     public SQLColumn(SQLTable parentTable, String columnName)
     {
         this.table = parentTable;
@@ -119,9 +96,9 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     }
 
     @Override
-    public boolean isNullable()
+    public boolean isNotNull()
     {
-        return getMetaString(SQLColumnMeta.IS_NULLABLE).equals("YES");
+        return getMetaString(SQLColumnMeta.IS_NULLABLE).equals("NO");
     }
 
     @Override
@@ -178,5 +155,63 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     public boolean autoIncrements()
     {
         return getMetaString(SQLColumnMeta.IS_AUTOINCREMENT).equals("YES");
+    }
+
+    @Override
+    public boolean isUnique()
+    {
+        // TODO: How do we get unique? It isn't found anywhere in metadata.
+        return isPrimaryKey();
+    }
+
+    @Override
+    public boolean hasConstraint(SQLConstraint constraint)
+    {
+        return false;
+    }
+
+    @Override
+    public SQLColumnInfo getInfo()
+    {
+        return new SQLColumnInfo(getDataType(), getName(), getSizes(), getConstraints(), getConstraintParams());
+    }
+
+    @Override
+    public SQLConstraint[] getConstraints()
+    {
+        List<SQLConstraint> constraints = new ArrayList<>();
+        boolean isNotNull = isNotNull();
+        boolean isUnique = isUnique();
+        boolean isPrimaryKey = isPrimaryKey();
+        boolean isForeignKey = isForeignKey();
+        boolean hasDefault = hasDefault();
+        boolean autoIncrements = autoIncrements();
+
+        if(isNotNull && !isPrimaryKey) constraints.add(SQLConstraint.NOT_NULL);
+        if(isUnique && !isPrimaryKey) constraints.add(SQLConstraint.UNIQUE);
+        if(isPrimaryKey) constraints.add(SQLConstraint.PRIMARY_KEY);
+        if(isForeignKey) constraints.add(SQLConstraint.FOREIGN_KEY);
+        if(hasDefault) constraints.add(SQLConstraint.DEFAULT);
+        if(autoIncrements) constraints.add(SQLConstraint.AUTO_INCREMENT);
+
+        return constraints.toArray(new SQLConstraint[0]);
+    }
+
+    @Override
+    public String[] getConstraintParams()
+    {
+        List<String> constraintParams = new ArrayList<>();
+        String def = getDefault();
+        if(def != null)
+        {
+            constraintParams.add(def);
+        }
+        return constraintParams.toArray(new String[0]);
+    }
+
+    @Override
+    public String getDefault()
+    {
+        return getMetaString(SQLColumnMeta.COLUMN_DEF);
     }
 }

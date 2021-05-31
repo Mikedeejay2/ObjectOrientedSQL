@@ -1,5 +1,6 @@
 package com.mikedeejay2.oosql.column;
 
+import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 
 public interface SQLColumnMetaData
@@ -12,7 +13,7 @@ public interface SQLColumnMetaData
 
     int getMetaInt(SQLColumnMeta metaType);
 
-    boolean isNullable();
+    boolean isNotNull();
 
     boolean isPrimaryKey();
 
@@ -21,4 +22,16 @@ public interface SQLColumnMetaData
     boolean hasDefault();
 
     boolean autoIncrements();
+
+    boolean isUnique();
+
+    boolean hasConstraint(SQLConstraint constraint);
+
+    SQLColumnInfo getInfo();
+
+    SQLConstraint[] getConstraints();
+
+    String[] getConstraintParams();
+
+    String getDefault();
 }

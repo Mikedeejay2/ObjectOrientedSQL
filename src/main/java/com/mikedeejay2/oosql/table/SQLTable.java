@@ -1,12 +1,14 @@
 package com.mikedeejay2.oosql.table;
 
 import com.mikedeejay2.oosql.column.SQLColumn;
+import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.column.SQLColumnMeta;
 import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +65,7 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     @Override
     public SQLColumn[] getColumns()
     {
-        List<SQLColumn> columns = new ArrayList<>();
+        SQLColumn[] columns = new SQLColumn[getColumnsAmount()];
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
@@ -71,7 +73,7 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
             {
                 String columnName = result.getString(SQLColumnMeta.COLUMN_NAME.asIndex());
                 SQLColumn column = new SQLColumn(this, columnName);
-                columns.add(column);
+                columns[result.getRow() - 1] = column;
             }
         }
         catch(SQLException throwables)
@@ -79,7 +81,28 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
             throwables.printStackTrace();
             return null;
         }
-        return columns.toArray(new SQLColumn[0]);
+        return columns;
+    }
+
+    @Override
+    public String[] getColumnNames()
+    {
+        String[] columns = new String[getColumnsAmount()];
+        try
+        {
+            ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
+            while(result.next())
+            {
+                String columnName = result.getString(SQLColumnMeta.COLUMN_NAME.asIndex());
+                columns[result.getRow() - 1] = columnName;
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+            return null;
+        }
+        return columns;
     }
 
     @Override
@@ -92,6 +115,22 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     public String getName()
     {
         return tableName;
+    }
+
+    @Override
+    public boolean addColumn(SQLColumnInfo info)
+    {
+        String command = generator.addColumn(tableName, info);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean addColumns(SQLColumnInfo... info)
+    {
+        String command = generator.addColumns(tableName, info);
+        int code = executor.executeUpdate(command);
+        return code != -1;
     }
 
     @Override
@@ -147,8 +186,8 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
-            result.last();
-            return result.getRow();
+            ResultSetMetaData resultMeta = result.getMetaData();
+            return resultMeta.getColumnCount();
         }
         catch(SQLException throwables)
         {
@@ -174,5 +213,23 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
             throwables.printStackTrace();
         }
         return 0;
+    }
+
+    @Override
+    public SQLTableInfo getInfo()
+    {
+        return null;
+    }
+
+    @Override
+    public SQLColumnInfo[] getColumnInfos()
+    {
+        SQLColumn[] columns = getColumns();
+        SQLColumnInfo[] infos = new SQLColumnInfo[columns.length];
+        for(int i = 0; i < columns.length; ++i)
+        {
+            infos[i] = columns[i].getInfo();
+        }
+        return infos;
     }
 }

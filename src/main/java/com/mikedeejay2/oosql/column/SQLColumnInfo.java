@@ -9,45 +9,45 @@ public class SQLColumnInfo
     protected final String name;
     protected final int[] sizes;
     protected final SQLConstraint[] constraints;
-    protected final String[] extra;
+    protected final String[] constraintParams;
 
-    public SQLColumnInfo(SQLDataType type, String name, int[] sizes, SQLConstraint[] constraints, String... extra)
+    public SQLColumnInfo(SQLDataType type, String name, int[] sizes, SQLConstraint[] constraints, String... constraintParams)
     {
         this.type = type;
         this.name = name;
         this.sizes = sizes;
         this.constraints = constraints;
-        this.extra = extra;
+        this.constraintParams = constraintParams;
     }
 
-    public SQLColumnInfo(SQLDataType type, String name, int size, SQLConstraint[] constraints, String... extra)
+    public SQLColumnInfo(SQLDataType type, String name, int size, SQLConstraint[] constraints, String... constraintParams)
     {
-        this(type, name, new int[]{size}, constraints, extra);
+        this(type, name, new int[]{size}, constraints, constraintParams);
     }
 
-    public SQLColumnInfo(SQLDataType type, String name, SQLConstraint[] constraints, String... extra)
+    public SQLColumnInfo(SQLDataType type, String name, SQLConstraint[] constraints, String... constraintParams)
     {
-        this(type, name, new int[]{}, constraints, extra);
+        this(type, name, new int[]{}, constraints, constraintParams);
     }
 
-    public SQLColumnInfo(SQLDataType type, String name, int size, SQLConstraint constraint, String... extra)
+    public SQLColumnInfo(SQLDataType type, String name, int size, SQLConstraint constraint, String... constraintParams)
     {
-        this(type, name, new int[]{size}, new SQLConstraint[]{constraint}, extra);
+        this(type, name, new int[]{size}, new SQLConstraint[]{constraint}, constraintParams);
     }
 
-    public SQLColumnInfo(SQLDataType type, String name, SQLConstraint constraint, String... extra)
+    public SQLColumnInfo(SQLDataType type, String name, SQLConstraint constraint, String... constraintParams)
     {
-        this(type, name, new int[]{}, new SQLConstraint[]{constraint}, extra);
+        this(type, name, new int[]{}, new SQLConstraint[]{constraint}, constraintParams);
     }
 
-    public SQLColumnInfo(SQLDataType type, String name, int size, String... extra)
+    public SQLColumnInfo(SQLDataType type, String name, int size, String... constraintParams)
     {
-        this(type, name, new int[]{size}, new SQLConstraint[]{}, extra);
+        this(type, name, new int[]{size}, new SQLConstraint[]{}, constraintParams);
     }
 
-    public SQLColumnInfo(SQLDataType type, String name, String... extra)
+    public SQLColumnInfo(SQLDataType type, String name, String... constraintParams)
     {
-        this(type, name, new int[]{}, new SQLConstraint[]{}, extra);
+        this(type, name, new int[]{}, new SQLConstraint[]{}, constraintParams);
     }
 
     public SQLDataType getType()
@@ -70,8 +70,8 @@ public class SQLColumnInfo
         return constraints;
     }
 
-    public String[] getExtra()
+    public String[] getConstraintParams()
     {
-        return extra;
+        return constraintParams;
     }
 }

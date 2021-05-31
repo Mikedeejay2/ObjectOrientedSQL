@@ -71,4 +71,16 @@ public class DebugSQLGenerator extends SimpleSQLGenerator
     {
         return print(super.addConstraints(tableName, info, constraints));
     }
+
+    @Override
+    public String dropColumn(String tableName, String columnName)
+    {
+        return print(super.dropColumn(tableName, columnName));
+    }
+
+    @Override
+    public String renameColumn(String tableName, SQLColumnInfo info, String newName)
+    {
+        return print(super.renameColumn(tableName, info, newName));
+    }
 }

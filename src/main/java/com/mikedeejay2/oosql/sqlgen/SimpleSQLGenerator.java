@@ -82,7 +82,7 @@ public class SimpleSQLGenerator implements SQLGenerator
             String data;
             if(curInfo == null)
             {
-                data = constraint.useParams() ? info.getConstraintExtra()[tableIndex] : "`" + curInfo.getName() + "`";
+                data = constraint.useParams() ? info.getConstraintParams()[tableIndex] : "`" + curInfo.getName() + "`";
                 ++tableIndex;
             }
             else
@@ -206,6 +206,13 @@ public class SimpleSQLGenerator implements SQLGenerator
                     builder.append(getSizesStr(sizes));
                 }
 
+                for(SQLConstraint cur : info.getConstraints())
+                {
+                    if(!cur.isDataConstraint()) continue;
+                    builder.append(" ")
+                        .append(cur.get());
+                }
+
                 if(constraint.useParams())
                 {
                     String extraStr = info.getConstraintParams()[extraIndex];
@@ -241,6 +248,12 @@ public class SimpleSQLGenerator implements SQLGenerator
         return builder.toString();
     }
 
+    @Override
+    public String dropColumn(String tableName, String columnName)
+    {
+        return "ALTER TABLE `" + tableName + "` DROP COLUMN `" + columnName + "`;";
+    }
+
     private String getExtraStr(String extraStr)
     {
         StringBuilder builder = new StringBuilder();
@@ -270,6 +283,37 @@ public class SimpleSQLGenerator implements SQLGenerator
             if(sizeI != sizes.length - 1) builder.append(", ");
         }
         builder.append(")");
+        return builder.toString();
+    }
+
+    @Override
+    public String renameColumn(String tableName, SQLColumnInfo info, String newName)
+    {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("ALTER TABLE `")
+            .append(tableName)
+            .append("` CHANGE `")
+            .append(info.getName())
+            .append("` `")
+            .append(newName)
+            .append("` ")
+            .append(info.getType().getName());
+
+        int[] sizes = info.getSizes();
+        if(sizes != null && sizes.length > 0)
+        {
+            builder.append(getSizesStr(sizes));
+        }
+
+        for(SQLConstraint cur : info.getConstraints())
+        {
+            if(!cur.isDataConstraint()) continue;
+            builder.append(" ")
+                .append(cur.get());
+        }
+        builder.append(";");
+
         return builder.toString();
     }
 }

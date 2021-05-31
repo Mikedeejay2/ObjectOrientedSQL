@@ -8,13 +8,13 @@ public class SQLTableInfo
     private final String tableName;
     private final SQLColumnInfo[] columns;
     private final SQLConstraint[] constraints;
-    private final String[] constraintExtra;
+    private final String[] constraintParams;
 
-    public SQLTableInfo(String tableName, SQLColumnInfo[] columns, SQLConstraint[] constraints, String[] constraintExtra) {
+    public SQLTableInfo(String tableName, SQLColumnInfo[] columns, SQLConstraint[] constraints, String[] constraintParams) {
         this.tableName = tableName;
         this.columns = columns;
         this.constraints = constraints;
-        this.constraintExtra = constraintExtra;
+        this.constraintParams = constraintParams;
     }
 
     public SQLConstraint[] getConstraints()
@@ -22,9 +22,9 @@ public class SQLTableInfo
         return constraints;
     }
 
-    public String[] getConstraintExtra()
+    public String[] getConstraintParams()
     {
-        return constraintExtra;
+        return constraintParams;
     }
 
     public SQLColumnInfo[] getColumns()

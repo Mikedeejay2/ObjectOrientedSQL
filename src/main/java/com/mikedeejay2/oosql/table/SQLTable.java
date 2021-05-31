@@ -5,10 +5,10 @@ import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.column.SQLColumnMeta;
 import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
+import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,13 +47,19 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     @Override
     public SQLColumn getColumn(int index)
     {
+        return getColumn(getColumnName(index));
+    }
+
+    @Override
+    public String getColumnName(int index)
+    {
         ++index;
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
             result.absolute(index);
             String columnName = result.getString(SQLColumnMeta.COLUMN_NAME.asIndex());
-            return getColumn(columnName);
+            return columnName;
         }
         catch(SQLException throwables)
         {
@@ -134,6 +140,46 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     }
 
     @Override
+    public boolean removeColumn(SQLColumn column)
+    {
+        return removeColumn(column.getName());
+    }
+
+    @Override
+    public boolean removeColumn(String columnName)
+    {
+        String command = generator.dropColumn(tableName, columnName);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean removeColumn(int index)
+    {
+        return removeColumn(getColumnName(index));
+    }
+
+    @Override
+    public boolean renameColumn(String columnName, String newName)
+    {
+        return renameColumn(getColumn(columnName), newName);
+    }
+
+    @Override
+    public boolean renameColumn(SQLColumn column, String newName)
+    {
+        String command = generator.renameColumn(tableName, column.getInfo(), newName);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean renameColumn(int index, String newName)
+    {
+        return renameColumn(getColumn(index), newName);
+    }
+
+    @Override
     public SQLTableType getTableType()
     {
         String tableTypeStr = getMeta(SQLTableMeta.TABLE_TYPE);
@@ -186,8 +232,8 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, tableName, null);
-            ResultSetMetaData resultMeta = result.getMetaData();
-            return resultMeta.getColumnCount();
+            result.last();
+            return result.getRow();
         }
         catch(SQLException throwables)
         {
@@ -218,7 +264,7 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     @Override
     public SQLTableInfo getInfo()
     {
-        return null;
+        return new SQLTableInfo(tableName, getColumnInfos(), getConstraints(), getConstraintParams());
     }
 
     @Override
@@ -231,5 +277,33 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
             infos[i] = columns[i].getInfo();
         }
         return infos;
+    }
+
+    @Override
+    @Deprecated
+    public boolean hasCheck()
+    {
+        // TODO: How do we get the check constraint?
+        return false;
+    }
+
+    @Override
+    @Deprecated
+    public SQLConstraint[] getConstraints()
+    {
+        List<SQLConstraint> constraints = new ArrayList<>();
+        if(hasCheck())
+        {
+            constraints.add(SQLConstraint.CHECK);
+        }
+        return constraints.toArray(new SQLConstraint[0]);
+    }
+
+    @Override
+    @Deprecated
+    public String[] getConstraintParams()
+    {
+        // TODO: How do we get the check constraint?
+        return new String[]{};
     }
 }

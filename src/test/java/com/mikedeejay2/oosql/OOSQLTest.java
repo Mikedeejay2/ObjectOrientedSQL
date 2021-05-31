@@ -11,10 +11,6 @@ import com.mikedeejay2.oosql.table.SQLTableInfo;
 import com.mikedeejay2.oosql.table.SQLTableType;
 import org.junit.jupiter.api.*;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
@@ -65,6 +61,13 @@ public class OOSQLTest
     public void testGetDBType()
     {
         assertNotNull(database.getConnectionType());
+    }
+
+    @Test
+    @Order(1)
+    public void testDBExists()
+    {
+        assertTrue(database.exists());
     }
 
     @Test
@@ -258,5 +261,184 @@ public class OOSQLTest
         SQLColumn column2 = table.getColumn("id");
         assertFalse(column1.autoIncrements());
         assertTrue(column2.autoIncrements());
+    }
+
+    @Test
+    @Order(3)
+    public void testGetColumns()
+    {
+        SQLTable table = database.getTable("test_table");
+        SQLColumn[] columns = table.getColumns();
+        assertNotNull(columns);
+        assertEquals(columns.length, table.getColumnsAmount());
+        for(SQLColumn column : columns)
+        {
+            assertNotNull(column);
+            assertTrue(table.columnExists(column));
+        }
+    }
+
+    @Test
+    @Order(3)
+    public void testGetColumnNames()
+    {
+        SQLTable table = database.getTable("test_table");
+        String[] colNames = table.getColumnNames();
+        assertNotNull(colNames);
+        assertEquals(colNames.length, table.getColumnsAmount());
+        for(String name : colNames)
+        {
+            assertNotNull(name);
+            assertTrue(table.columnExists(name));
+        }
+    }
+
+    @Test
+    @Order(3)
+    public void testHasConstraint()
+    {
+        SQLTable table = database.getTable("test_table");
+        SQLColumn column1 = table.getColumn("username");
+        SQLColumn column2 = table.getColumn("id");
+        assertTrue(column2.hasConstraint(SQLConstraint.PRIMARY_KEY));
+        assertFalse(column1.hasConstraint(SQLConstraint.NOT_NULL));
+    }
+
+    @Test
+    @Order(3)
+    public void testGetColumnInfo()
+    {
+        SQLTable table = database.getTable("test_table");
+        SQLColumn column1 = table.getColumn("username");
+        SQLColumn column2 = table.getColumn("id");
+        SQLColumnInfo columnInfo1 = column1.getInfo();
+        SQLColumnInfo columnInfo2 = column2.getInfo();
+        assertNotNull(columnInfo1);
+        assertNotNull(columnInfo2);
+        assertEquals(columnInfo1.getName(), column1.getName());
+        assertEquals(20, columnInfo1.getSizes()[0]);
+        assertTrue(columnInfo2.getConstraints().length > 0);
+    }
+
+    @Test
+    @Order(3)
+    public void testGetColumnConstraints()
+    {
+        SQLTable table = database.getTable("test_table");
+        SQLColumn column1 = table.getColumn("name");
+        SQLColumn column2 = table.getColumn("id");
+        SQLConstraint[] col1Constraints = column1.getConstraints();
+        SQLConstraint[] col2Constraints = column2.getConstraints();
+        assertNotNull(col1Constraints);
+        assertNotNull(col2Constraints);
+        assertTrue(col1Constraints.length > 0);
+        assertTrue(col2Constraints.length > 0);
+        assertSame(col2Constraints[0], SQLConstraint.PRIMARY_KEY);
+        assertSame(col1Constraints[0], SQLConstraint.NOT_NULL);
+    }
+
+    @Test
+    @Order(3)
+    public void testGetDefault()
+    {
+        SQLTable table = database.getTable("test_table");
+        SQLColumn column = table.getColumn("username");
+        String columnDefault = column.getDefault();
+        assertNotNull(columnDefault);
+        assertEquals(columnDefault, "ARandomUser");
+    }
+
+    @Test
+    @Order(3)
+    public void testGetRestraintParameters()
+    {
+        SQLTable table = database.getTable("test_table");
+        SQLColumn column = table.getColumn("username");
+        String[] constraintParams = column.getConstraintParams();
+        assertNotNull(constraintParams);
+        assertEquals(constraintParams[0], "ARandomUser");
+    }
+
+    @Test
+    @Order(3)
+    public void testIsDBEmpty()
+    {
+        assertFalse(database.isEmpty());
+    }
+
+    @Test
+    @Order(3)
+    public void testGetColumnInfos()
+    {
+        SQLTable table = database.getTable("test_table");
+        SQLColumnInfo[] infos = table.getColumnInfos();
+        assertNotNull(infos);
+        assertEquals(3, infos.length);
+        assertEquals("id", infos[0].getName());
+    }
+
+    @Test
+    @Order(3)
+    public void testGetTableInfo()
+    {
+        SQLTable table = database.getTable("test_table");
+        SQLTableInfo info = table.getInfo();
+        assertNotNull(info);
+        assertEquals("test_table", info.getTableName());
+        assertEquals(3, info.getColumns().length);
+    }
+
+    @Test
+    @Order(3)
+    public void testGetColumnName()
+    {
+        SQLTable table = database.getTable("test_table");
+        String columnName = table.getColumnName(0);
+        assertNotNull(columnName);
+        assertEquals(columnName, "id");
+    }
+
+    @Test
+    @Order(3)
+    public void testGetTableConstraints()
+    {
+        SQLTable table = database.getTable("test_table");
+        SQLConstraint[] constraints = table.getConstraints();
+        assertNotNull(constraints);
+        assertEquals(constraints.length, 0);
+    }
+
+    @Test
+    @Order(4)
+    public void testAddColumn()
+    {
+        SQLTable table = database.getTable("test_table");
+        table.addColumn(new SQLColumnInfo(SQLDataType.VARCHAR, "password", 20));
+        assertTrue(table.columnExists("password"));
+        SQLColumn column = table.getColumn("password");
+        assertNotNull(column);
+        assertEquals("password", column.getName());
+    }
+
+    @Test
+    @Order(5)
+    public void testRenameColumn()
+    {
+        SQLTable table = database.getTable("test_table");
+        table.renameColumn("password", "newpass");
+        assertTrue(table.columnExists("newpass"));
+        assertFalse(table.columnExists("password"));
+        table.renameColumn("newpass", "password");
+        assertTrue(table.columnExists("password"));
+        assertFalse(table.columnExists("newpass"));
+    }
+
+    @Test
+    @Order(6)
+    public void testRemoveColumn()
+    {
+        SQLTable table = database.getTable("test_table");
+        table.removeColumn("password");
+        assertFalse(table.columnExists("password"));
     }
 }

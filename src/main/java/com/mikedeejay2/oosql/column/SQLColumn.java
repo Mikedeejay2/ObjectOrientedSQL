@@ -158,6 +158,7 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     }
 
     @Override
+    @Deprecated
     public boolean isUnique()
     {
         // TODO: How do we get unique? It isn't found anywhere in metadata.
@@ -167,7 +168,23 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     @Override
     public boolean hasConstraint(SQLConstraint constraint)
     {
-        return false;
+        switch(constraint)
+        {
+            case NOT_NULL:
+                return isNotNull();
+            case UNIQUE:
+                return isUnique();
+            case PRIMARY_KEY:
+                return isPrimaryKey();
+            case FOREIGN_KEY:
+                return isForeignKey();
+            case DEFAULT:
+                return hasDefault();
+            case AUTO_INCREMENT:
+                return autoIncrements();
+            default:
+                return false;
+        }
     }
 
     @Override

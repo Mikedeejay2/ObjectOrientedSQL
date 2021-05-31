@@ -17,6 +17,8 @@ public interface SQLTableInterface extends SQLObject
 
     SQLColumn getColumn(int index);
 
+    String getColumnName(int index);
+
     SQLDatabase getDatabase();
 
     String getName();
@@ -24,4 +26,16 @@ public interface SQLTableInterface extends SQLObject
     boolean addColumn(SQLColumnInfo info);
 
     boolean addColumns(SQLColumnInfo... info);
+
+    boolean removeColumn(SQLColumn column);
+
+    boolean removeColumn(String columnName);
+
+    boolean removeColumn(int index);
+
+    boolean renameColumn(String columnName, String newName);
+
+    boolean renameColumn(SQLColumn column, String newName);
+
+    boolean renameColumn(int index, String newName);
 }

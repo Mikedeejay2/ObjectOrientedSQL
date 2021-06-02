@@ -1,30 +1,23 @@
 package com.mikedeejay2.oosql.table;
 
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
-import com.mikedeejay2.oosql.misc.SQLConstraint;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 
 public class SQLTableInfo
 {
     private final String tableName;
     private final SQLColumnInfo[] columns;
-    private final SQLConstraint[] constraints;
-    private final String[] constraintParams;
+    private final SQLConstraints constraints;
 
-    public SQLTableInfo(String tableName, SQLColumnInfo[] columns, SQLConstraint[] constraints, String[] constraintParams) {
+    public SQLTableInfo(String tableName, SQLConstraints constraints, SQLColumnInfo... columns) {
         this.tableName = tableName;
-        this.columns = columns;
         this.constraints = constraints;
-        this.constraintParams = constraintParams;
+        this.columns = columns;
     }
 
-    public SQLConstraint[] getConstraints()
+    public SQLConstraints getConstraints()
     {
         return constraints;
-    }
-
-    public String[] getConstraintParams()
-    {
-        return constraintParams;
     }
 
     public SQLColumnInfo[] getColumns()

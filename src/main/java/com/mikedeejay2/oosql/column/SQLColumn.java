@@ -2,7 +2,7 @@ package com.mikedeejay2.oosql.column;
 
 import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
-import com.mikedeejay2.oosql.misc.SQLConstraint;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
 import com.mikedeejay2.oosql.table.SQLTable;

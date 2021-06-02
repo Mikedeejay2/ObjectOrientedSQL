@@ -4,7 +4,7 @@ import com.mikedeejay2.oosql.column.SQLColumn;
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.connector.data.MySQLConnectionData;
 import com.mikedeejay2.oosql.database.SQLDatabase;
-import com.mikedeejay2.oosql.misc.SQLConstraint;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 import com.mikedeejay2.oosql.table.SQLTable;
 import com.mikedeejay2.oosql.table.SQLTableInfo;

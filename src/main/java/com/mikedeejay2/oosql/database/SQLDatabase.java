@@ -1,6 +1,5 @@
 package com.mikedeejay2.oosql.database;
 
-import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.connector.MySQLConnection;
 import com.mikedeejay2.oosql.connector.SQLConnection;
 import com.mikedeejay2.oosql.connector.SQLiteConnection;
@@ -8,7 +7,6 @@ import com.mikedeejay2.oosql.connector.data.MySQLConnectionData;
 import com.mikedeejay2.oosql.connector.data.SQLConnectionData;
 import com.mikedeejay2.oosql.connector.data.SQLiteConnectionData;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
-import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLType;
 import com.mikedeejay2.oosql.sqlgen.DebugSQLGenerator;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;

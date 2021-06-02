@@ -1,53 +1,41 @@
 package com.mikedeejay2.oosql.column;
 
-import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 
 public class SQLColumnInfo
 {
     protected final SQLDataType type;
     protected final String name;
     protected final int[] sizes;
-    protected final SQLConstraint[] constraints;
-    protected final String[] constraintParams;
+    protected final SQLConstraints constraints;
 
-    public SQLColumnInfo(SQLDataType type, String name, int[] sizes, SQLConstraint[] constraints, String... constraintParams)
+    public SQLColumnInfo(SQLDataType type, String name, int[] sizes, SQLConstraints constraints)
     {
         this.type = type;
         this.name = name;
         this.sizes = sizes;
         this.constraints = constraints;
-        this.constraintParams = constraintParams;
     }
 
-    public SQLColumnInfo(SQLDataType type, String name, int size, SQLConstraint[] constraints, String... constraintParams)
+    public SQLColumnInfo(SQLDataType type, String name, int size, SQLConstraints constraints)
     {
-        this(type, name, new int[]{size}, constraints, constraintParams);
+        this(type, name, new int[]{size}, constraints);
     }
 
-    public SQLColumnInfo(SQLDataType type, String name, SQLConstraint[] constraints, String... constraintParams)
+    public SQLColumnInfo(SQLDataType type, String name, SQLConstraints constraints)
     {
-        this(type, name, new int[]{}, constraints, constraintParams);
+        this(type, name, new int[]{}, constraints);
     }
 
-    public SQLColumnInfo(SQLDataType type, String name, int size, SQLConstraint constraint, String... constraintParams)
+    public SQLColumnInfo(SQLDataType type, String name, int size)
     {
-        this(type, name, new int[]{size}, new SQLConstraint[]{constraint}, constraintParams);
+        this(type, name, new int[]{size}, null);
     }
 
-    public SQLColumnInfo(SQLDataType type, String name, SQLConstraint constraint, String... constraintParams)
+    public SQLColumnInfo(SQLDataType type, String name)
     {
-        this(type, name, new int[]{}, new SQLConstraint[]{constraint}, constraintParams);
-    }
-
-    public SQLColumnInfo(SQLDataType type, String name, int size, String... constraintParams)
-    {
-        this(type, name, new int[]{size}, new SQLConstraint[]{}, constraintParams);
-    }
-
-    public SQLColumnInfo(SQLDataType type, String name, String... constraintParams)
-    {
-        this(type, name, new int[]{}, new SQLConstraint[]{}, constraintParams);
+        this(type, name, new int[]{}, null);
     }
 
     public SQLDataType getType()
@@ -65,13 +53,8 @@ public class SQLColumnInfo
         return sizes;
     }
 
-    public SQLConstraint[] getConstraints()
+    public SQLConstraints getConstraints()
     {
         return constraints;
-    }
-
-    public String[] getConstraintParams()
-    {
-        return constraintParams;
     }
 }

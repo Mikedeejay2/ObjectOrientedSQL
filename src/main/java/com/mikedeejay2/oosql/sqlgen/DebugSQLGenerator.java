@@ -1,7 +1,7 @@
 package com.mikedeejay2.oosql.sqlgen;
 
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
-import com.mikedeejay2.oosql.misc.SQLConstraint;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.table.SQLTableInfo;
 
 public class DebugSQLGenerator extends SimpleSQLGenerator

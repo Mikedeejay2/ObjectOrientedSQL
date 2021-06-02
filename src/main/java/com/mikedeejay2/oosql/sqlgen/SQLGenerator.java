@@ -1,7 +1,8 @@
 package com.mikedeejay2.oosql.sqlgen;
 
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
-import com.mikedeejay2.oosql.misc.SQLConstraint;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.table.SQLTableInfo;
 
 public interface SQLGenerator
@@ -24,9 +25,17 @@ public interface SQLGenerator
 
     String addColumns(String tableName, SQLColumnInfo... info);
 
-    String addConstraints(String tableName, SQLColumnInfo info, SQLConstraint... constraints);
+    String addConstraint(String tableName, SQLColumnInfo info, SQLConstraintData constraint);
 
-    String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraint... constraints);
+    String dropConstraint(String tableName, SQLColumnInfo info, SQLConstraintData constraint);
+
+    String addConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints);
+
+    String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints);
+
+    String addConstraints(String tableName, SQLColumnInfo info, SQLConstraints constraints);
+
+    String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraints constraints);
 
     String dropColumn(String tableName, String columnName);
 

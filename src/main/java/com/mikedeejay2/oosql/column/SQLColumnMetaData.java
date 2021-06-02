@@ -1,7 +1,8 @@
 package com.mikedeejay2.oosql.column;
 
-import com.mikedeejay2.oosql.misc.SQLConstraint;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 
 public interface SQLColumnMetaData
 {
@@ -29,7 +30,7 @@ public interface SQLColumnMetaData
 
     SQLColumnInfo getInfo();
 
-    SQLConstraint[] getConstraints();
+    SQLConstraintData[] getConstraints();
 
     String[] getConstraintParams();
 

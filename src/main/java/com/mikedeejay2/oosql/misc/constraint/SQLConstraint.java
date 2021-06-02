@@ -1,4 +1,4 @@
-package com.mikedeejay2.oosql.misc;
+package com.mikedeejay2.oosql.misc.constraint;
 
 public enum SQLConstraint
 {

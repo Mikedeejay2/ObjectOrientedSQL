@@ -181,6 +181,14 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     }
 
     @Override
+    public boolean renameTable(String tableName, String newName)
+    {
+        String command = generator.renameTable(tableName, newName);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
     public DatabaseMetaData getMetaData()
     {
         try

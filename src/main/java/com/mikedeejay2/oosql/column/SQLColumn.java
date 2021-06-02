@@ -1,8 +1,10 @@
 package com.mikedeejay2.oosql.column;
 
 import com.mikedeejay2.oosql.database.SQLDatabase;
+import com.mikedeejay2.oosql.execution.SQLExecutor;
 import com.mikedeejay2.oosql.misc.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
+import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
 import com.mikedeejay2.oosql.table.SQLTable;
 
 import java.sql.ResultSet;
@@ -13,6 +15,8 @@ import java.util.List;
 public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
 {
     protected final SQLDatabase database;
+    protected final SQLExecutor executor;
+    protected final SQLGenerator generator;
     protected final SQLTable table;
     protected String columnName;
 
@@ -20,6 +24,8 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     {
         this.table = parentTable;
         this.database = parentTable.getDatabase();
+        this.executor = table.getExecutor();
+        this.generator = table.getGenerator();
         this.columnName = columnName;
     }
 
@@ -46,6 +52,31 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     public String getName()
     {
         return columnName;
+    }
+
+    @Override
+    public boolean addConstraint(SQLConstraint constraint)
+    {
+        String command = generator.addConstraints(table.getName(), getInfo(), constraint);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean addConstraints(SQLConstraint... constraints)
+    {
+        boolean success = true;
+        for(SQLConstraint constraint : constraints)
+        {
+            success &= addConstraint(constraint);
+        }
+        return success;
+    }
+
+    @Override
+    public boolean renameColumn(String newName)
+    {
+        return table.renameColumn(columnName, newName);
     }
 
     @Override
@@ -230,5 +261,15 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     public String getDefault()
     {
         return getMetaString(SQLColumnMeta.COLUMN_DEF);
+    }
+
+    public SQLExecutor getExecutor()
+    {
+        return executor;
+    }
+
+    public SQLGenerator getGenerator()
+    {
+        return generator;
     }
 }

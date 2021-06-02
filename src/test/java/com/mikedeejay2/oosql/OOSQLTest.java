@@ -421,6 +421,17 @@ public class OOSQLTest
     }
 
     @Test
+    @Order(4)
+    public void testAddConstraint()
+    {
+        SQLTable table = database.getTable("test_table");
+        SQLColumn column = table.getColumn("username");
+        assertFalse(column.hasConstraint(SQLConstraint.NOT_NULL));
+        column.addConstraint(SQLConstraint.NOT_NULL);
+        assertTrue(column.hasConstraint(SQLConstraint.NOT_NULL));
+    }
+
+    @Test
     @Order(5)
     public void testRenameColumn()
     {

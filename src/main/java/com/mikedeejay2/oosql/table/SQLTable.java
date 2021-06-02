@@ -31,10 +31,9 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     @Override
     public boolean renameTable(String newName)
     {
-        String command = generator.renameTable(tableName, newName);
-        int code = database.getExecutor().executeUpdate(command);
+        boolean success = database.renameTable(tableName, newName);
         this.tableName = newName;
-        return code != -1;
+        return success;
     }
 
     @Override
@@ -305,5 +304,21 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     {
         // TODO: How do we get the check constraint?
         return new String[]{};
+    }
+
+    @Override
+    public boolean exists()
+    {
+        return database.tableExists(tableName);
+    }
+
+    public SQLExecutor getExecutor()
+    {
+        return executor;
+    }
+
+    public SQLGenerator getGenerator()
+    {
+        return generator;
     }
 }

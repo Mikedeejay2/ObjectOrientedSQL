@@ -26,7 +26,7 @@ public interface SQLGenerator
 
     String addConstraints(String tableName, SQLColumnInfo info, SQLConstraint... constraints);
 
-//    String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraint... constraints);
+    String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraint... constraints);
 
     String dropColumn(String tableName, String columnName);
 

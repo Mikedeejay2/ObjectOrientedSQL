@@ -27,4 +27,6 @@ public interface SQLTableMetaData
     SQLConstraint[] getConstraints();
 
     String[] getConstraintParams();
+
+    boolean exists();
 }

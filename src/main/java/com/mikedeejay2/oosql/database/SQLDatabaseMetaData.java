@@ -22,4 +22,6 @@ public interface SQLDatabaseMetaData
     int getTablesAmount(SQLTableType... types);
 
     boolean isEmpty();
+
+    boolean exists();
 }

@@ -3,6 +3,7 @@ package com.mikedeejay2.oosql.misc.constraint;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,6 +14,18 @@ public class SQLConstraints implements Iterable<SQLConstraintData>
     public SQLConstraints()
     {
         this.constraintList = new ArrayList<>();
+    }
+
+    public SQLConstraints(SQLConstraints constraints)
+    {
+        this.constraintList = new ArrayList<>();
+        constraintList.addAll(constraints.getList());
+    }
+
+    public SQLConstraints(SQLConstraintData[] constraints)
+    {
+        this.constraintList = new ArrayList<>();
+        Collections.addAll(constraintList, constraints);
     }
 
     public SQLConstraintData[] get()
@@ -33,6 +46,27 @@ public class SQLConstraints implements Iterable<SQLConstraintData>
     public SQLConstraints clear()
     {
         constraintList.clear();
+        return this;
+    }
+
+    public boolean contains(SQLConstraint constraint)
+    {
+        for(SQLConstraintData data : constraintList)
+        {
+            if(constraint == data.getConstraint())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public SQLConstraints addAll(SQLConstraintData[] constraints)
+    {
+        for(SQLConstraintData cur : constraints)
+        {
+            this.add(cur);
+        }
         return this;
     }
 
@@ -98,5 +132,17 @@ public class SQLConstraints implements Iterable<SQLConstraintData>
     public Iterator<SQLConstraintData> iterator()
     {
         return constraintList.iterator();
+    }
+
+    public SQLConstraints combine(SQLConstraintData[] constraints)
+    {
+        SQLConstraints newConstraints = new SQLConstraints(this);
+        for(SQLConstraintData cur : constraints)
+        {
+            if(cur == null) continue;
+            if(newConstraints.contains(cur.getConstraint())) continue;
+            newConstraints.add(cur);
+        }
+        return newConstraints;
     }
 }

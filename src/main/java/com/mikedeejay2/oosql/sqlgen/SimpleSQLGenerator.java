@@ -2,6 +2,7 @@ package com.mikedeejay2.oosql.sqlgen;
 
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.misc.SQLDataType;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.table.SQLTableInfo;
@@ -35,8 +36,6 @@ public class SimpleSQLGenerator implements SQLGenerator
                 }
             }
         }
-
-        int extraIndex = 0;
 
         for(int index = 0; index < columns.length; ++index)
         {
@@ -204,6 +203,17 @@ public class SimpleSQLGenerator implements SQLGenerator
         return null;
     }
 
+    private String setDataType(String tableName, SQLColumnInfo info)
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ALTER TABLE `")
+            .append(tableName)
+            .append("` MODIFY COLUMN `")
+            .append(info.getName())
+            .append("` ");
+        return builder.toString();
+    }
+
     @Override
     public String dropConstraint(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
     {
@@ -213,81 +223,7 @@ public class SimpleSQLGenerator implements SQLGenerator
     @Override
     public String addConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
     {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ALTER TABLE `")
-            .append(tableName)
-            .append("` ");
-
-        boolean flag = false;
-        for(SQLConstraintData constraint : constraints)
-        {
-            if(flag) builder.append("\n");
-            if(constraint.isDataConstraint())
-            {
-                builder.append("MODIFY `")
-                    .append(info.getName())
-                    .append("` ")
-                    .append(info.getType().getName());
-
-                int[] sizes = info.getSizes();
-                if(sizes != null && sizes.length > 0)
-                {
-                    builder.append(getSizesStr(sizes));
-                }
-
-                SQLConstraints curConstraints = info.getConstraints();
-                if(curConstraints != null)
-                {
-                    for(SQLConstraintData cur : curConstraints.get())
-                    {
-                        if(!cur.isDataConstraint()) continue;
-                        builder.append(" ")
-                            .append(cur.get());
-                    }
-                }
-
-                builder.append(" ")
-                    .append(constraint.get());
-
-                if(constraint.isCheck())
-                {
-                    builder.append(" ");
-                    builder.append(getExtraStr(constraint.getCheckCondition()));
-                }
-                else if(constraint.isDefault())
-                {
-                    builder.append(" ");
-                    builder.append(getExtraStr(constraint.getDefaultValue()));
-                }
-            }
-            else
-            {
-                builder.append("ADD ")
-                    .append(constraint.get())
-                    .append(" (");
-
-                if(constraint.isCheck())
-                {
-                    builder.append(" ");
-                    builder.append(getExtraStr(constraint.getCheckCondition()));
-                }
-                else if(constraint.isDefault())
-                {
-                    builder.append(" ");
-                    builder.append(getExtraStr(constraint.getDefaultValue()));
-                }
-                else
-                {
-                    builder.append("`")
-                        .append(info.getName())
-                        .append("`");
-                }
-                builder.append(")");
-            }
-            flag = true;
-            builder.append(";");
-        }
-        return builder.toString();
+        return null;
     }
 
     @Override

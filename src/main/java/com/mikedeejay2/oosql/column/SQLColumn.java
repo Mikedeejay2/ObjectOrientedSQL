@@ -4,13 +4,15 @@ import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
+import com.mikedeejay2.oosql.column.key.SQLForeignKeyMeta;
+import com.mikedeejay2.oosql.column.key.SQLPrimaryKeyMeta;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
 import com.mikedeejay2.oosql.table.SQLTable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
 {
@@ -55,7 +57,7 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     }
 
     @Override
-    public boolean addConstraint(SQLConstraint constraint)
+    public boolean addConstraint(SQLConstraintData constraint)
     {
         String command = generator.addConstraints(table.getName(), getInfo(), constraint);
         int code = executor.executeUpdate(command);
@@ -63,14 +65,21 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     }
 
     @Override
-    public boolean addConstraints(SQLConstraint... constraints)
+    public boolean addConstraints(SQLConstraintData... constraints)
     {
         boolean success = true;
-        for(SQLConstraint constraint : constraints)
+        for(SQLConstraintData constraint : constraints)
         {
             success &= addConstraint(constraint);
         }
         return success;
+    }
+
+    @Override
+    public boolean addConstraints(SQLConstraints constraints)
+    {
+        if(constraints == null) return false;
+        return addConstraints(constraints.get());
     }
 
     @Override
@@ -91,14 +100,14 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     }
 
     @Override
-    public String getMetaString(SQLColumnMeta metaType)
+    public Object getMetaObject(SQLColumnMeta metaDataType)
     {
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, table.getName(), columnName);
             if(result.next())
             {
-                return result.getString(metaType.asIndex());
+                return result.getObject(metaDataType.asIndex());
             }
         }
         catch(SQLException throwables)
@@ -109,21 +118,48 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     }
 
     @Override
-    public int getMetaInt(SQLColumnMeta metaType)
+    public <R> R getMetaObject(SQLColumnMeta metaDataType, Class<R> type)
     {
         try
         {
             ResultSet result = database.getMetaData().getColumns(null, null, table.getName(), columnName);
             if(result.next())
             {
-                return result.getInt(metaType.asIndex());
+                return result.getObject(metaDataType.asIndex(), type);
             }
         }
         catch(SQLException throwables)
         {
             throwables.printStackTrace();
         }
-        return -1;
+        return null;
+    }
+
+    @Override
+    public String getMetaString(SQLColumnMeta metaDataType)
+    {
+        return getMetaObject(metaDataType, String.class);
+    }
+
+    @Override
+    public int getMetaInt(SQLColumnMeta metaDataType)
+    {
+        Integer value = getMetaObject(metaDataType, Integer.class);
+        return value == null ? 0 : value;
+    }
+
+    @Override
+    public short getMetaShort(SQLColumnMeta metaDataType)
+    {
+        Short value = getMetaObject(metaDataType, Short.class);
+        return value == null ? 0 : value;
+    }
+
+    @Override
+    public long getMetaLong(SQLColumnMeta metaDataType)
+    {
+        Long value = getMetaObject(metaDataType, Long.class);
+        return value == null ? 0 : value;
     }
 
     @Override
@@ -157,23 +193,7 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     @Override
     public boolean isForeignKey()
     {
-        try
-        {
-            ResultSet resultForeign = database.getMetaData().getImportedKeys(null, null, table.getName());
-            while(resultForeign.next())
-            {
-                String curName = resultForeign.getString(SQLColumnMeta.COLUMN_NAME.asIndex());
-                if(columnName.equals(curName))
-                {
-                    return true;
-                }
-            }
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-        }
-        return false;
+        return getForeignKeyMetaString(SQLForeignKeyMeta.PKCOLUMN_NAME) != null;
     }
 
     @Override
@@ -221,13 +241,13 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     @Override
     public SQLColumnInfo getInfo()
     {
-        return new SQLColumnInfo(getDataType(), getName(), getSizes(), getConstraints(), getConstraintParams());
+        return new SQLColumnInfo(getDataType(), getName(), getSizes(), getConstraints());
     }
 
     @Override
-    public SQLConstraint[] getConstraints()
+    public SQLConstraints getConstraints()
     {
-        List<SQLConstraint> constraints = new ArrayList<>();
+        SQLConstraints constraints = new SQLConstraints();
         boolean isNotNull = isNotNull();
         boolean isUnique = isUnique();
         boolean isPrimaryKey = isPrimaryKey();
@@ -235,32 +255,44 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
         boolean hasDefault = hasDefault();
         boolean autoIncrements = autoIncrements();
 
-        if(isNotNull && !isPrimaryKey) constraints.add(SQLConstraint.NOT_NULL);
-        if(isUnique && !isPrimaryKey) constraints.add(SQLConstraint.UNIQUE);
-        if(isPrimaryKey) constraints.add(SQLConstraint.PRIMARY_KEY);
-        if(isForeignKey) constraints.add(SQLConstraint.FOREIGN_KEY);
-        if(hasDefault) constraints.add(SQLConstraint.DEFAULT);
-        if(autoIncrements) constraints.add(SQLConstraint.AUTO_INCREMENT);
+        if(isNotNull && !isPrimaryKey) constraints.addNotNull();
+        if(isUnique && !isPrimaryKey) constraints.addUnique();
+        if(isPrimaryKey) constraints.addPrimaryKey();
+        if(isForeignKey) constraints.addForeignKey(getReferenceTableName(), getReferenceColumnName());
+        if(hasDefault) constraints.addDefault(getDefault());
+        if(autoIncrements) constraints.addAutoIncrement();
 
-        return constraints.toArray(new SQLConstraint[0]);
-    }
-
-    @Override
-    public String[] getConstraintParams()
-    {
-        List<String> constraintParams = new ArrayList<>();
-        String def = getDefault();
-        if(def != null)
-        {
-            constraintParams.add(def);
-        }
-        return constraintParams.toArray(new String[0]);
+        return constraints;
     }
 
     @Override
     public String getDefault()
     {
         return getMetaString(SQLColumnMeta.COLUMN_DEF);
+    }
+
+    @Override
+    public String getReferenceTableName()
+    {
+        return getForeignKeyMetaString(SQLForeignKeyMeta.PKTABLE_NAME);
+    }
+
+    @Override
+    public SQLTable getReferenceTable()
+    {
+        return database.getTable(getReferenceTableName());
+    }
+
+    @Override
+    public String getReferenceColumnName()
+    {
+        return getForeignKeyMetaString(SQLForeignKeyMeta.PKCOLUMN_NAME);
+    }
+
+    @Override
+    public SQLColumn getReferenceColumn()
+    {
+        return getReferenceTable().getColumn(getReferenceColumnName());
     }
 
     public SQLExecutor getExecutor()
@@ -271,5 +303,133 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     public SQLGenerator getGenerator()
     {
         return generator;
+    }
+
+    @Override
+    public Object getForeignKeyMetaObject(SQLForeignKeyMeta metaDataType)
+    {
+        try
+        {
+            ResultSet resultForeign = database.getMetaData().getExportedKeys(null, null, table.getName());
+            while(resultForeign.next())
+            {
+                String curName = resultForeign.getString(SQLForeignKeyMeta.PKCOLUMN_NAME.asIndex());
+                if(columnName.equals(curName))
+                {
+                    return resultForeign.getObject(metaDataType.asIndex());
+                }
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public <R> R getForeignKeyMetaObject(SQLForeignKeyMeta metaDataType, Class<R> type)
+    {
+        try
+        {
+            ResultSet resultForeign = database.getMetaData().getExportedKeys(null, null, table.getName());
+            while(resultForeign.next())
+            {
+                String curName = resultForeign.getString(SQLForeignKeyMeta.PKCOLUMN_NAME.asIndex());
+                if(columnName.equals(curName))
+                {
+                    return resultForeign.getObject(metaDataType.asIndex(), type);
+                }
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String getForeignKeyMetaString(SQLForeignKeyMeta metaDataType)
+    {
+        return getForeignKeyMetaObject(metaDataType, String.class);
+    }
+
+    @Override
+    public int getForeignKeyMetaInt(SQLForeignKeyMeta metaDataType)
+    {
+        Integer value = getForeignKeyMetaObject(metaDataType, Integer.class);
+        return value == null ? 0 : value;
+    }
+
+    @Override
+    public short getForeignKeyMetaShort(SQLForeignKeyMeta metaDataType)
+    {
+        Short value = getForeignKeyMetaObject(metaDataType, Short.class);
+        return value == null ? 0 : value;
+    }
+
+    @Override
+    public Object getPrimaryKeyMetaObject(SQLPrimaryKeyMeta metaDataType)
+    {
+        try
+        {
+            ResultSet result = database.getMetaData().getImportedKeys(null, null, table.getName());
+            while(result.next())
+            {
+                String curName = result.getString(SQLPrimaryKeyMeta.COLUMN_NAME.asIndex());
+                if(columnName.equals(curName))
+                {
+                    return result.getObject(metaDataType.asIndex());
+                }
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public <R> R getPrimaryKeyMetaObject(SQLPrimaryKeyMeta metaDataType, Class<R> type)
+    {
+        try
+        {
+            ResultSet result = database.getMetaData().getImportedKeys(null, null, table.getName());
+            while(result.next())
+            {
+                String curName = result.getString(SQLPrimaryKeyMeta.COLUMN_NAME.asIndex());
+                if(columnName.equals(curName))
+                {
+                    return result.getObject(metaDataType.asIndex(), type);
+                }
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String getPrimaryKeyMetaString(SQLPrimaryKeyMeta metaDataType)
+    {
+        return getPrimaryKeyMetaObject(metaDataType, String.class);
+    }
+
+    @Override
+    public int getPrimaryKeyMetaInt(SQLPrimaryKeyMeta metaDataType)
+    {
+        Integer value = getPrimaryKeyMetaObject(metaDataType, Integer.class);
+        return value == null ? 0 : value;
+    }
+
+    @Override
+    public short getPrimaryKeyMetaShort(SQLPrimaryKeyMeta metaDataType)
+    {
+        Short value = getPrimaryKeyMetaObject(metaDataType, Short.class);
+        return value == null ? 0 : value;
     }
 }

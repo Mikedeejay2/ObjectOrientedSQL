@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.sqlgen;
 
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
-import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
@@ -23,11 +22,18 @@ public class SimpleSQLGenerator implements SQLGenerator
 
         if(columns.length > 0) builder.append(" (");
 
-        List<SQLConstraintData> endConstraints = new ArrayList<>();
-        SQLConstraintData[] tableConstraintData = info.getConstraints().get();
-        if(tableConstraintData != null)
+        List<Map.Entry<SQLConstraintData, SQLColumnInfo>> endConstraints = new ArrayList<>();
+        SQLConstraints tableConstraints = info.getConstraints();
+        if(tableConstraints != null)
         {
-            Collections.addAll(endConstraints, tableConstraintData);
+            SQLConstraintData[] tableConstraintData = tableConstraints.get();
+            if(tableConstraintData != null)
+            {
+                for(SQLConstraintData curTableData : tableConstraintData)
+                {
+                    endConstraints.add(new AbstractMap.SimpleEntry<>(curTableData, null));
+                }
+            }
         }
 
         int extraIndex = 0;
@@ -56,7 +62,7 @@ public class SimpleSQLGenerator implements SQLGenerator
                 {
                     if(constraint.isTableConstraint())
                     {
-                        endConstraints.add(constraint);
+                        endConstraints.add(new AbstractMap.SimpleEntry<>(constraint, curInfo));
                         continue;
                     }
 
@@ -72,7 +78,7 @@ public class SimpleSQLGenerator implements SQLGenerator
                     else if(constraint.isDefault())
                     {
                         builder.append(" ");
-                        builder.append(getExtraStr(constraint.getCheckCondition()));
+                        builder.append(getExtraStr(constraint.getDefaultValue()));
                     }
                 }
             }
@@ -80,8 +86,10 @@ public class SimpleSQLGenerator implements SQLGenerator
             if(index != columns.length - 1) builder.append(", ");
         }
 
-        for(SQLConstraintData curConstraint : endConstraints)
+        for(Map.Entry<SQLConstraintData, SQLColumnInfo> entry : endConstraints)
         {
+            SQLConstraintData curConstraint = entry.getKey();
+            SQLColumnInfo curInfo = entry.getValue();
             String data = null;
             if(curConstraint.isCheck())
             {
@@ -90,6 +98,10 @@ public class SimpleSQLGenerator implements SQLGenerator
             else if(curConstraint.isDefault())
             {
                 data = curConstraint.getDefaultValue();
+            }
+            else
+            {
+                data = "`" + curInfo.getName() + "`";
             }
             String name = curConstraint.get();
             builder.append(", ")
@@ -187,6 +199,18 @@ public class SimpleSQLGenerator implements SQLGenerator
     }
 
     @Override
+    public String addConstraint(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
+    {
+        return null;
+    }
+
+    @Override
+    public String dropConstraint(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
+    {
+        return null;
+    }
+
+    @Override
     public String addConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
     {
         StringBuilder builder = new StringBuilder();
@@ -273,6 +297,18 @@ public class SimpleSQLGenerator implements SQLGenerator
     }
 
     @Override
+    public String addConstraints(String tableName, SQLColumnInfo info, SQLConstraints constraints)
+    {
+        return null;
+    }
+
+    @Override
+    public String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraints constraints)
+    {
+        return null;
+    }
+
+    @Override
     public String dropColumn(String tableName, String columnName)
     {
         return "ALTER TABLE `" + tableName + "` DROP COLUMN `" + columnName + "`;";
@@ -298,11 +334,14 @@ public class SimpleSQLGenerator implements SQLGenerator
             builder.append(getSizesStr(sizes));
         }
 
-        for(SQLConstraint cur : info.getConstraints())
+        if(info.getConstraints() != null)
         {
-            if(!cur.isDataConstraint()) continue;
-            builder.append(" ")
-                .append(cur.get());
+            for(SQLConstraintData cur : info.getConstraints().get())
+            {
+                if(!cur.isDataConstraint()) continue;
+                builder.append(" ")
+                    .append(cur.get());
+            }
         }
         builder.append(";");
 

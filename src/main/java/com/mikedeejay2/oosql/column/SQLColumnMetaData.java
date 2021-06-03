@@ -1,18 +1,19 @@
 package com.mikedeejay2.oosql.column;
 
+import com.mikedeejay2.oosql.misc.*;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
-import com.mikedeejay2.oosql.misc.SQLDataType;
-import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
+import com.mikedeejay2.oosql.column.key.*;
+import com.mikedeejay2.oosql.table.SQLTable;
+import com.mikedeejay2.oosql.table.index.SQLMetaDataGetter;
 
-public interface SQLColumnMetaData
+public interface SQLColumnMetaData extends SQLMetaDataGetter<SQLColumnMeta>,
+    SQLPrimaryKeyMetaGetter<SQLPrimaryKeyMeta>,
+    SQLForeignKeyMetaGetter<SQLForeignKeyMeta>
 {
     SQLDataType getDataType();
 
     int[] getSizes();
-
-    String getMetaString(SQLColumnMeta metaType);
-
-    int getMetaInt(SQLColumnMeta metaType);
 
     boolean isNotNull();
 
@@ -30,9 +31,17 @@ public interface SQLColumnMetaData
 
     SQLColumnInfo getInfo();
 
-    SQLConstraintData[] getConstraints();
-
-    String[] getConstraintParams();
+    SQLConstraints getConstraints();
 
     String getDefault();
+
+    String getReferenceTableName();
+
+    SQLTable getReferenceTable();
+
+    String getReferenceColumnName();
+
+    SQLColumn getReferenceColumn();
+
+
 }

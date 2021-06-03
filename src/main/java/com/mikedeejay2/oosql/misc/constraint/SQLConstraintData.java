@@ -144,7 +144,7 @@ public class SQLConstraintData
 
     public static SQLConstraintData ofDefault(String defaultValue)
     {
-        return new SQLConstraintData(SQLConstraint.CHECK, null, defaultValue, null, null);
+        return new SQLConstraintData(SQLConstraint.DEFAULT, null, defaultValue, null, null);
     }
 
     public static SQLConstraintData ofAutoIncrement()

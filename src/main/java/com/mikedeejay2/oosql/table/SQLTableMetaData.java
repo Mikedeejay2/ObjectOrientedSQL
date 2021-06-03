@@ -2,13 +2,12 @@ package com.mikedeejay2.oosql.table;
 
 import com.mikedeejay2.oosql.column.SQLColumn;
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
-import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
+import com.mikedeejay2.oosql.table.index.SQLMetaDataGetter;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 
-public interface SQLTableMetaData
+public interface SQLTableMetaData extends SQLMetaDataGetter<SQLTableMeta>
 {
     SQLTableType getTableType();
-
-    String getMeta(SQLTableMeta metaType);
 
     boolean columnExists(String columnName);
 
@@ -24,9 +23,9 @@ public interface SQLTableMetaData
 
     boolean hasCheck();
 
-    SQLConstraintData[] getConstraints();
-
-    String[] getConstraintParams();
+    SQLConstraints getConstraints();
 
     boolean exists();
+
+    String getCheck();
 }

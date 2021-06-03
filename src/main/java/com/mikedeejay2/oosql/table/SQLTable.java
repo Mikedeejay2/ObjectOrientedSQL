@@ -5,13 +5,11 @@ import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.column.SQLColumnMeta;
 import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
-import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SQLTable implements SQLTableInterface, SQLTableMetaData
 {
@@ -181,27 +179,9 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     @Override
     public SQLTableType getTableType()
     {
-        String tableTypeStr = getMeta(SQLTableMeta.TABLE_TYPE);
+        String tableTypeStr = getMetaString(SQLTableMeta.TABLE_TYPE);
         SQLTableType tableType = SQLTableType.valueOf(tableTypeStr);
         return tableType;
-    }
-
-    @Override
-    public String getMeta(SQLTableMeta metaType)
-    {
-        try
-        {
-            ResultSet result = database.getMetaData().getTables(null, null, tableName, null);
-            if(result.next())
-            {
-                return result.getString(metaType.asIndex());
-            }
-        }
-        catch(SQLException throwables)
-        {
-            throwables.printStackTrace();
-        }
-        return null;
     }
 
     @Override
@@ -263,7 +243,7 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     @Override
     public SQLTableInfo getInfo()
     {
-        return new SQLTableInfo(tableName, getColumnInfos(), getConstraints(), getConstraintParams());
+        return new SQLTableInfo(tableName, getConstraints(), getColumnInfos());
     }
 
     @Override
@@ -288,28 +268,87 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
 
     @Override
     @Deprecated
-    public SQLConstraint[] getConstraints()
+    public SQLConstraints getConstraints()
     {
-        List<SQLConstraint> constraints = new ArrayList<>();
+        SQLConstraints constraints = new SQLConstraints();
         if(hasCheck())
         {
-            constraints.add(SQLConstraint.CHECK);
+            constraints.addCheck(getCheck());
         }
-        return constraints.toArray(new SQLConstraint[0]);
-    }
-
-    @Override
-    @Deprecated
-    public String[] getConstraintParams()
-    {
-        // TODO: How do we get the check constraint?
-        return new String[]{};
+        return constraints;
     }
 
     @Override
     public boolean exists()
     {
         return database.tableExists(tableName);
+    }
+
+    @Override
+    public String getCheck()
+    {
+        // TODO: How do we get the check condition?
+        return null;
+    }
+
+    @Override
+    public Object getMetaObject(SQLTableMeta metaDataType)
+    {
+        try
+        {
+            ResultSet result = database.getMetaData().getTables(null, null, tableName, null);
+            if(result.next())
+            {
+                return result.getObject(metaDataType.asIndex());
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public <R> R getMetaObject(SQLTableMeta metaDataType, Class<R> type)
+    {
+        try
+        {
+            ResultSet result = database.getMetaData().getTables(null, null, tableName, null);
+            if(result.next())
+            {
+                return result.getObject(metaDataType.asIndex(), type);
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String getMetaString(SQLTableMeta metaDataType)
+    {
+        return getMetaObject(metaDataType, String.class);
+    }
+
+    @Override
+    public int getMetaInt(SQLTableMeta metaDataType)
+    {
+        return getMetaObject(metaDataType, Integer.class);
+    }
+
+    @Override
+    public short getMetaShort(SQLTableMeta metaDataType)
+    {
+        return getMetaObject(metaDataType, Short.class);
+    }
+
+    @Override
+    public long getMetaLong(SQLTableMeta metaDataType)
+    {
+        return getMetaObject(metaDataType, Long.class);
     }
 
     public SQLExecutor getExecutor()

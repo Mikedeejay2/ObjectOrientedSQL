@@ -6,6 +6,8 @@ import com.mikedeejay2.oosql.connector.data.MySQLConnectionData;
 import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.SQLDataType;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.table.SQLTable;
 import com.mikedeejay2.oosql.table.SQLTableInfo;
 import com.mikedeejay2.oosql.table.SQLTableType;
@@ -98,28 +100,16 @@ public class OOSQLTest
         database.createTable(
             new SQLTableInfo(
                 "test_table",
-                new SQLColumnInfo[]{
-                    new SQLColumnInfo(
-                        SQLDataType.INTEGER,
-                        "id",
-                        new SQLConstraint[]{
-                            SQLConstraint.PRIMARY_KEY,
-                            SQLConstraint.AUTO_INCREMENT}),
-                    new SQLColumnInfo(
-                        SQLDataType.VARCHAR,
-                        "name",
-                        20,
-                        SQLConstraint.NOT_NULL),
-                    new SQLColumnInfo(
-                        SQLDataType.VARCHAR,
-                        "username",
-                        20,
-                        new SQLConstraint[]{
-                            SQLConstraint.UNIQUE,
-                            SQLConstraint.DEFAULT},
-                        "ARandomUser")},
                 null,
-                null
+                new SQLColumnInfo(
+                    SQLDataType.INTEGER, "id",
+                    new SQLConstraints().addPrimaryKey().addAutoIncrement()),
+                new SQLColumnInfo(
+                    SQLDataType.VARCHAR, "name", 20,
+                    new SQLConstraints().addNotNull()),
+                new SQLColumnInfo(
+                    SQLDataType.VARCHAR, "username", 20,
+                    new SQLConstraints().addUnique().addDefault("ARandomUser"))
         ));
 
         assertTrue(database.tableExists("test_table"));
@@ -317,7 +307,7 @@ public class OOSQLTest
         assertNotNull(columnInfo2);
         assertEquals(columnInfo1.getName(), column1.getName());
         assertEquals(20, columnInfo1.getSizes()[0]);
-        assertTrue(columnInfo2.getConstraints().length > 0);
+        assertTrue(columnInfo2.getConstraints().length() > 0);
     }
 
     @Test
@@ -327,14 +317,14 @@ public class OOSQLTest
         SQLTable table = database.getTable("test_table");
         SQLColumn column1 = table.getColumn("name");
         SQLColumn column2 = table.getColumn("id");
-        SQLConstraint[] col1Constraints = column1.getConstraints();
-        SQLConstraint[] col2Constraints = column2.getConstraints();
+        SQLConstraints col1Constraints = column1.getConstraints();
+        SQLConstraints col2Constraints = column2.getConstraints();
         assertNotNull(col1Constraints);
         assertNotNull(col2Constraints);
-        assertTrue(col1Constraints.length > 0);
-        assertTrue(col2Constraints.length > 0);
-        assertSame(col2Constraints[0], SQLConstraint.PRIMARY_KEY);
-        assertSame(col1Constraints[0], SQLConstraint.NOT_NULL);
+        assertTrue(col1Constraints.length() > 0);
+        assertTrue(col2Constraints.length() > 0);
+        assertSame(col2Constraints.get(0).getConstraint(), SQLConstraint.PRIMARY_KEY);
+        assertSame(col1Constraints.get(0).getConstraint(), SQLConstraint.NOT_NULL);
     }
 
     @Test
@@ -346,17 +336,6 @@ public class OOSQLTest
         String columnDefault = column.getDefault();
         assertNotNull(columnDefault);
         assertEquals(columnDefault, "ARandomUser");
-    }
-
-    @Test
-    @Order(3)
-    public void testGetRestraintParameters()
-    {
-        SQLTable table = database.getTable("test_table");
-        SQLColumn column = table.getColumn("username");
-        String[] constraintParams = column.getConstraintParams();
-        assertNotNull(constraintParams);
-        assertEquals(constraintParams[0], "ARandomUser");
     }
 
     @Test
@@ -403,9 +382,9 @@ public class OOSQLTest
     public void testGetTableConstraints()
     {
         SQLTable table = database.getTable("test_table");
-        SQLConstraint[] constraints = table.getConstraints();
+        SQLConstraints constraints = table.getConstraints();
         assertNotNull(constraints);
-        assertEquals(constraints.length, 0);
+        assertEquals(constraints.length(), 0);
     }
 
     @Test
@@ -427,7 +406,7 @@ public class OOSQLTest
         SQLTable table = database.getTable("test_table");
         SQLColumn column = table.getColumn("username");
         assertFalse(column.hasConstraint(SQLConstraint.NOT_NULL));
-        column.addConstraint(SQLConstraint.NOT_NULL);
+        column.addConstraint(SQLConstraintData.ofNotNull());
         assertTrue(column.hasConstraint(SQLConstraint.NOT_NULL));
     }
 

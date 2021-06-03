@@ -2,6 +2,7 @@ package com.mikedeejay2.oosql.sqlgen;
 
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.table.SQLTableInfo;
 
 public class DebugSQLGenerator extends SimpleSQLGenerator
@@ -67,13 +68,13 @@ public class DebugSQLGenerator extends SimpleSQLGenerator
     }
 
     @Override
-    public String addConstraints(String tableName, SQLColumnInfo info, SQLConstraint... constraints)
+    public String addConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
     {
         return print(super.addConstraints(tableName, info, constraints));
     }
 
     @Override
-    public String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraint... constraints)
+    public String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
     {
         return print(super.dropConstraints(tableName, info, constraints));
     }

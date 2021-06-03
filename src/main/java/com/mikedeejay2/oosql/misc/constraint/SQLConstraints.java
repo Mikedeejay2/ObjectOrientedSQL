@@ -1,9 +1,12 @@
 package com.mikedeejay2.oosql.misc.constraint;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class SQLConstraints
+public class SQLConstraints implements Iterable<SQLConstraintData>
 {
     protected final List<SQLConstraintData> constraintList;
 
@@ -15,6 +18,32 @@ public class SQLConstraints
     public SQLConstraintData[] get()
     {
         return constraintList.toArray(new SQLConstraintData[0]);
+    }
+
+    public SQLConstraintData get(int index)
+    {
+        return constraintList.get(index);
+    }
+
+    public List<SQLConstraintData> getList()
+    {
+        return constraintList;
+    }
+
+    public SQLConstraints clear()
+    {
+        constraintList.clear();
+        return this;
+    }
+
+    public int length()
+    {
+        return constraintList.size();
+    }
+
+    public int size()
+    {
+        return constraintList.size();
     }
 
     public SQLConstraints add(SQLConstraintData constraint)
@@ -62,5 +91,12 @@ public class SQLConstraints
     public SQLConstraints addAutoIncrement()
     {
         return this.add(SQLConstraintData.ofAutoIncrement());
+    }
+
+    @NotNull
+    @Override
+    public Iterator<SQLConstraintData> iterator()
+    {
+        return constraintList.iterator();
     }
 }

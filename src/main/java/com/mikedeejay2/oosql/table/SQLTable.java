@@ -7,6 +7,7 @@ import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
+import com.mikedeejay2.oosql.table.index.SQLIndexInfoMeta;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -359,5 +360,65 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     public SQLGenerator getGenerator()
     {
         return generator;
+    }
+
+    @Override
+    public Object getIndexInfoMetaObject(SQLIndexInfoMeta metaDataType)
+    {
+        try
+        {
+            ResultSet result = database.getMetaData().getIndexInfo(null, null, tableName, false, true);
+            if(result.next())
+            {
+                return result.getObject(metaDataType.asIndex());
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public <R> R getIndexInfoMetaObject(SQLIndexInfoMeta metaDataType, Class<R> type)
+    {
+        try
+        {
+            ResultSet result = database.getMetaData().getIndexInfo(null, null, tableName, false, true);
+            if(result.next())
+            {
+                return result.getObject(metaDataType.asIndex(), type);
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public String getIndexInfoMetaString(SQLIndexInfoMeta metaDataType)
+    {
+        return getIndexInfoMetaObject(metaDataType, String.class);
+    }
+
+    @Override
+    public int getIndexInfoMetaInt(SQLIndexInfoMeta metaDataType)
+    {
+        return getIndexInfoMetaObject(metaDataType, Integer.class);
+    }
+
+    @Override
+    public short getIndexInfoMetaShort(SQLIndexInfoMeta metaDataType)
+    {
+        return getIndexInfoMetaObject(metaDataType, Short.class);
+    }
+
+    @Override
+    public long getIndexInfoMetaLong(SQLIndexInfoMeta metaDataType)
+    {
+        return getIndexInfoMetaObject(metaDataType, Long.class);
     }
 }

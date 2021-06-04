@@ -90,24 +90,37 @@ public class SimpleSQLGenerator implements SQLGenerator
             SQLConstraintData curConstraint = entry.getKey();
             SQLColumnInfo curInfo = entry.getValue();
             String data = null;
-            if(curConstraint.isCheck())
+            switch(curConstraint.getConstraint())
             {
-                data = curConstraint.getCheckCondition();
-            }
-            else if(curConstraint.isDefault())
-            {
-                data = curConstraint.getDefaultValue();
-            }
-            else
-            {
-                data = "`" + curInfo.getName() + "`";
+                case CHECK:
+                    data = curConstraint.getCheckCondition();
+                    break;
+                case DEFAULT:
+                    data = curConstraint.getDefaultValue();
+                    break;
+                case FOREIGN_KEY:
+                    data = "`" +
+                        curConstraint.getReferenceTable() + "`(`" +
+                        curConstraint.getReferenceColumn() + "`)";
+                    break;
+                default:
+                    data = "`" + curInfo.getName() + "`";
+                    break;
             }
             String name = curConstraint.get();
             builder.append(", ")
-                .append(name)
-                .append("(")
-                .append(data)
-                .append(")");
+                .append(name);
+            if(curConstraint.isCheck())
+            {
+                builder.append(" REFERENCES ")
+                    .append(data);
+            }
+            else
+            {
+                builder.append("(")
+                    .append(data)
+                    .append(")");
+            }
         }
 
         if(columns.length > 0) builder.append(")");
@@ -215,9 +228,22 @@ public class SimpleSQLGenerator implements SQLGenerator
     }
 
     @Override
-    public String dropConstraint(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
+    public String dropConstraint(String tableName, SQLColumnInfo info, SQLConstraint constraint)
     {
+        if(constraint.isDataConstraint())
+        {
+            SQLConstraints constraints = info.getConstraints();
+            if(info.getConstraints() == null)
+            {
+                constraints = new SQLConstraints();
+            }
+            constraints.remove(constraint);
+            SQLColumnInfo newInfo = new SQLColumnInfo(info.getType(), info.getName(), info.getSizes(), constraints);
+            return setDataType(tableName, newInfo);
+        }
         return null;
+        // TODO: Not enough information, new constraint system required
+        // TODO: Technically, primary key could still be removed here.
     }
 
     @Override
@@ -227,9 +253,29 @@ public class SimpleSQLGenerator implements SQLGenerator
     }
 
     @Override
-    public String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
+    public String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraint... constraints)
     {
-        return null;
+        StringBuilder builder = new StringBuilder();
+        boolean flag = false;
+        for(SQLConstraint constraint : constraints)
+        {
+            if(constraint.isDataConstraint())
+            {
+                SQLConstraints constraintss = info.getConstraints();
+                if(info.getConstraints() == null)
+                {
+                    constraintss = new SQLConstraints();
+                }
+                constraintss.remove(constraint);
+                info = new SQLColumnInfo(info.getType(), info.getName(), info.getSizes(), constraintss);
+                if(flag) builder.append("\n");
+                builder.append(setDataType(tableName, info));
+                flag = true;
+            }
+            // TODO: Not enough information, new constraint system required
+            // TODO: Technically, primary key could still be removed here.
+        }
+        return builder.toString();
     }
 
     @Override
@@ -349,6 +395,12 @@ public class SimpleSQLGenerator implements SQLGenerator
 
         builder.append(";");
         return builder.toString();
+    }
+
+    private String removeConstraintInternal(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
+    {
+        // TODO: Not enough information, new constraint system required
+        return null;
     }
 
     private String getExtraStr(String extraStr)

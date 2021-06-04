@@ -200,7 +200,18 @@ public class SimpleSQLGenerator implements SQLGenerator
     @Override
     public String addConstraint(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
     {
-        return null;
+        if(constraint.isDataConstraint())
+        {
+            SQLConstraints constraints = info.getConstraints();
+            if(info.getConstraints() == null)
+            {
+                constraints = new SQLConstraints();
+            }
+            constraints = constraints.combine(new SQLConstraintData[]{constraint});
+            SQLColumnInfo newInfo = new SQLColumnInfo(info.getType(), info.getName(), info.getSizes(), info.getConstraints());
+            return setDataType(tableName, newInfo);
+        }
+        return addConstraintInternal(tableName, info, constraint);
     }
 
     private String setDataType(String tableName, SQLColumnInfo info)
@@ -210,7 +221,75 @@ public class SimpleSQLGenerator implements SQLGenerator
             .append(tableName)
             .append("` MODIFY COLUMN `")
             .append(info.getName())
-            .append("` ");
+            .append("` ")
+            .append(info.getType().getName());
+
+        int[] sizes = info.getSizes();
+        if(sizes != null && sizes.length > 0)
+        {
+            builder.append(getSizesStr(info.getSizes()));
+        }
+
+        SQLConstraints constraints = info.getConstraints();
+        if(constraints != null)
+        {
+            for(SQLConstraintData constraintData : constraints)
+            {
+                if(!constraintData.isDataConstraint()) continue;
+                builder.append(" ")
+                    .append(constraintData.get());
+            }
+        }
+
+        builder.append(";");
+        return builder.toString();
+    }
+
+    private String addConstraintInternal(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ALTER TABLE `").append(tableName).append("` ");
+
+        if(constraint.isDefault())
+        {
+            builder.append("SET ");
+        }
+        else
+        {
+            builder.append("ADD ");
+        }
+
+        builder.append(constraint.get());
+        switch(constraint.getConstraint())
+        {
+            case DEFAULT:
+                builder.append(" ")
+                    .append(getExtraStr(constraint.getDefaultValue()));
+                break;
+            case CHECK:
+                builder.append(" (")
+                    .append(constraint.getCheckCondition())
+                    .append(")");
+                break;
+            case PRIMARY_KEY:
+            case UNIQUE:
+                builder.append(" (`")
+                    .append(info.getName())
+                    .append("`)");
+                break;
+            case FOREIGN_KEY:
+                builder.append(" (`")
+                    .append(info.getName())
+                    .append("`)")
+                    .append(" REFERENCES `")
+                    .append(constraint.getReferenceTable())
+                    .append("`(`")
+                    .append(constraint.getReferenceColumn())
+                    .append("`)");
+                break;
+        }
+
+        builder.append(";");
         return builder.toString();
     }
 

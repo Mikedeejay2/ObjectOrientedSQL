@@ -49,6 +49,11 @@ public class SQLConstraints implements Iterable<SQLConstraintData>
         return this;
     }
 
+    public boolean isEmpty()
+    {
+        return constraintList.isEmpty();
+    }
+
     public boolean contains(SQLConstraint constraint)
     {
         for(SQLConstraintData data : constraintList)

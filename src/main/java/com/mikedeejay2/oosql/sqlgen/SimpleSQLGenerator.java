@@ -179,7 +179,7 @@ public class SimpleSQLGenerator implements SQLGenerator
             if(constraintData.length > 0)
             {
                 builder.append("\n");
-                builder.append(addConstraints(tableName, info, constraints));
+                builder.append(addConstraints(tableName, info, constraintData));
             }
         }
 
@@ -208,10 +208,68 @@ public class SimpleSQLGenerator implements SQLGenerator
                 constraints = new SQLConstraints();
             }
             constraints = constraints.combine(new SQLConstraintData[]{constraint});
-            SQLColumnInfo newInfo = new SQLColumnInfo(info.getType(), info.getName(), info.getSizes(), info.getConstraints());
+            SQLColumnInfo newInfo = new SQLColumnInfo(info.getType(), info.getName(), info.getSizes(), constraints);
             return setDataType(tableName, newInfo);
         }
         return addConstraintInternal(tableName, info, constraint);
+    }
+
+    @Override
+    public String dropConstraint(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
+    {
+        return null;
+    }
+
+    @Override
+    public String addConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
+    {
+        return null;
+    }
+
+    @Override
+    public String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
+    {
+        return null;
+    }
+
+    @Override
+    public String dropColumn(String tableName, String columnName)
+    {
+        return "ALTER TABLE `" + tableName + "` DROP COLUMN `" + columnName + "`;";
+    }
+
+    @Override
+    public String renameColumn(String tableName, SQLColumnInfo info, String newName)
+    {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("ALTER TABLE `")
+            .append(tableName)
+            .append("` CHANGE `")
+            .append(info.getName())
+            .append("` `")
+            .append(newName)
+            .append("` ")
+            .append(info.getType().getName());
+
+        int[] sizes = info.getSizes();
+        if(sizes != null && sizes.length > 0)
+        {
+            builder.append(getSizesStr(sizes));
+        }
+
+        if(info.getConstraints() != null)
+        {
+            for(SQLConstraintData cur : info.getConstraints().get())
+            {
+                if(!cur.isDataConstraint()) continue;
+                builder.append(" ")
+                    .append(cur.get());
+            }
+        }
+        builder.append(";");
+
+        return builder.toString();
     }
 
     private String setDataType(String tableName, SQLColumnInfo info)
@@ -290,76 +348,6 @@ public class SimpleSQLGenerator implements SQLGenerator
         }
 
         builder.append(";");
-        return builder.toString();
-    }
-
-    @Override
-    public String dropConstraint(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
-    {
-        return null;
-    }
-
-    @Override
-    public String addConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
-    {
-        return null;
-    }
-
-    @Override
-    public String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
-    {
-        return null;
-    }
-
-    @Override
-    public String addConstraints(String tableName, SQLColumnInfo info, SQLConstraints constraints)
-    {
-        return null;
-    }
-
-    @Override
-    public String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraints constraints)
-    {
-        return null;
-    }
-
-    @Override
-    public String dropColumn(String tableName, String columnName)
-    {
-        return "ALTER TABLE `" + tableName + "` DROP COLUMN `" + columnName + "`;";
-    }
-
-    @Override
-    public String renameColumn(String tableName, SQLColumnInfo info, String newName)
-    {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("ALTER TABLE `")
-            .append(tableName)
-            .append("` CHANGE `")
-            .append(info.getName())
-            .append("` `")
-            .append(newName)
-            .append("` ")
-            .append(info.getType().getName());
-
-        int[] sizes = info.getSizes();
-        if(sizes != null && sizes.length > 0)
-        {
-            builder.append(getSizesStr(sizes));
-        }
-
-        if(info.getConstraints() != null)
-        {
-            for(SQLConstraintData cur : info.getConstraints().get())
-            {
-                if(!cur.isDataConstraint()) continue;
-                builder.append(" ")
-                    .append(cur.get());
-            }
-        }
-        builder.append(";");
-
         return builder.toString();
     }
 

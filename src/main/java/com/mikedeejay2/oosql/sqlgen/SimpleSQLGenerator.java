@@ -241,15 +241,36 @@ public class SimpleSQLGenerator implements SQLGenerator
             SQLColumnInfo newInfo = new SQLColumnInfo(info.getType(), info.getName(), info.getSizes(), constraints);
             return setDataType(tableName, newInfo);
         }
-        return null;
-        // TODO: Not enough information, new constraint system required
-        // TODO: Technically, primary key could still be removed here.
+        return removeConstraintInternal(tableName, info, constraint);
     }
 
     @Override
     public String addConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
     {
-        return null;
+        StringBuilder builder = new StringBuilder();
+        boolean flag = false;
+        for(SQLConstraintData constraint : constraints)
+        {
+            if(constraint.isDataConstraint())
+            {
+                SQLConstraints constraintss = info.getConstraints();
+                if(info.getConstraints() == null)
+                {
+                    constraintss = new SQLConstraints();
+                }
+                constraintss = constraintss.combine(new SQLConstraintData[]{constraint});
+                info = new SQLColumnInfo(info.getType(), info.getName(), info.getSizes(), constraintss);
+                if(flag) builder.append("\n");
+                builder.append(setDataType(tableName, info));
+            }
+            else
+            {
+                if(flag) builder.append("\n");
+                builder.append(addConstraintInternal(tableName, info, constraint));
+            }
+            flag = true;
+        }
+        return builder.toString();
     }
 
     @Override
@@ -270,10 +291,13 @@ public class SimpleSQLGenerator implements SQLGenerator
                 info = new SQLColumnInfo(info.getType(), info.getName(), info.getSizes(), constraintss);
                 if(flag) builder.append("\n");
                 builder.append(setDataType(tableName, info));
-                flag = true;
             }
-            // TODO: Not enough information, new constraint system required
-            // TODO: Technically, primary key could still be removed here.
+            else
+            {
+                if(flag) builder.append("\n");
+                builder.append(removeConstraintInternal(tableName, info, constraint));
+            }
+            flag = true;
         }
         return builder.toString();
     }
@@ -397,10 +421,31 @@ public class SimpleSQLGenerator implements SQLGenerator
         return builder.toString();
     }
 
-    private String removeConstraintInternal(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
+    private String removeConstraintInternal(String tableName, SQLColumnInfo info, SQLConstraint constraint)
     {
-        // TODO: Not enough information, new constraint system required
-        return null;
+        StringBuilder builder = new StringBuilder();
+        builder.append("ALTER TABLE `")
+            .append(tableName);
+
+        switch(constraint)
+        {
+            case UNIQUE:
+                builder.append("` DROP INDEX `").append(info.getName()).append("`");
+                break;
+            case FOREIGN_KEY:
+            case CHECK:
+                builder.append("` DROP `").append(info.getName()).append("`");
+                break;
+            case PRIMARY_KEY:
+                builder.append("` DROP PRIMARY KEY");
+                break;
+            case DEFAULT:
+                builder.append("` ALTER `").append(info.getName()).append("` DROP DEFAULT");
+                break;
+        }
+
+        builder.append(";");
+        return builder.toString();
     }
 
     private String getExtraStr(String extraStr)

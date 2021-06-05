@@ -4,6 +4,9 @@ import com.mikedeejay2.oosql.SQLObject;
 import com.mikedeejay2.oosql.column.SQLColumn;
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.database.SQLDatabase;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 
 public interface SQLTableInterface extends SQLObject
 {
@@ -38,4 +41,14 @@ public interface SQLTableInterface extends SQLObject
     boolean renameColumn(SQLColumn column, String newName);
 
     boolean renameColumn(int index, String newName);
+
+    boolean addConstraint(SQLConstraintData constraint);
+
+    boolean addConstraints(SQLConstraintData... constraints);
+
+    boolean addConstraints(SQLConstraints constraints);
+
+    boolean removeConstraint(SQLConstraint constraint);
+
+    boolean removeConstraints(SQLConstraint... constraints);
 }

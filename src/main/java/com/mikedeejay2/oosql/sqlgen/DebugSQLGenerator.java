@@ -74,7 +74,19 @@ public class DebugSQLGenerator extends SimpleSQLGenerator
     }
 
     @Override
-    public String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraintData... constraints)
+    public String addConstraint(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
+    {
+        return print(super.addConstraint(tableName, info, constraint));
+    }
+
+    @Override
+    public String dropConstraint(String tableName, SQLColumnInfo info, SQLConstraint constraint)
+    {
+        return print(super.dropConstraint(tableName, info, constraint));
+    }
+
+    @Override
+    public String dropConstraints(String tableName, SQLColumnInfo info, SQLConstraint... constraints)
     {
         return print(super.dropConstraints(tableName, info, constraints));
     }

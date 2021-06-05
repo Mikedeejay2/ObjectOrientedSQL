@@ -67,12 +67,9 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     @Override
     public boolean addConstraints(SQLConstraintData... constraints)
     {
-        boolean success = true;
-        for(SQLConstraintData constraint : constraints)
-        {
-            success &= addConstraint(constraint);
-        }
-        return success;
+        String command = generator.addConstraints(table.getName(), getInfo(), constraints);
+        int code = executor.executeUpdate(command);
+        return code != -1;
     }
 
     @Override
@@ -86,6 +83,22 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     public boolean renameColumn(String newName)
     {
         return table.renameColumn(columnName, newName);
+    }
+
+    @Override
+    public boolean removeConstraint(SQLConstraint constraint)
+    {
+        String command = generator.dropConstraint(table.getName(), getInfo(), constraint);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean removeConstraints(SQLConstraint... constraints)
+    {
+        String command = generator.dropConstraints(table.getName(), getInfo(), constraints);
+        int code = executor.executeUpdate(command);
+        return code != -1;
     }
 
     @Override

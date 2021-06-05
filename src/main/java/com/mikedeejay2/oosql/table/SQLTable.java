@@ -5,6 +5,8 @@ import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.column.SQLColumnMeta;
 import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
+import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
 import com.mikedeejay2.oosql.table.index.SQLIndexInfoMeta;
@@ -175,6 +177,45 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     public boolean renameColumn(int index, String newName)
     {
         return renameColumn(getColumn(index), newName);
+    }
+
+    @Override
+    public boolean addConstraint(SQLConstraintData constraint)
+    {
+        String command = generator.addConstraint(tableName, null, constraint);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean addConstraints(SQLConstraintData... constraints)
+    {
+        String command = generator.addConstraints(tableName, null, constraints);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean addConstraints(SQLConstraints constraints)
+    {
+        if(constraints == null) return false;
+        return addConstraints(constraints.get());
+    }
+
+    @Override
+    public boolean removeConstraint(SQLConstraint constraint)
+    {
+        String command = generator.dropConstraint(tableName, null, constraint);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean removeConstraints(SQLConstraint... constraints)
+    {
+        String command = generator.dropConstraints(tableName, null, constraints);
+        int code = executor.executeUpdate(command);
+        return code != -1;
     }
 
     @Override

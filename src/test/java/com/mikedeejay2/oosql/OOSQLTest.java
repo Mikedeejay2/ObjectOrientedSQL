@@ -431,10 +431,4 @@ public class OOSQLTest
         table.removeColumn("password");
         assertFalse(table.columnExists("password"));
     }
-
-    @Test
-    @Order(6)
-    public void testRemoveConstraint()
-    {
-    }
 }

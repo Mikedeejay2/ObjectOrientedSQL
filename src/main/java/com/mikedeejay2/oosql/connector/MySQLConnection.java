@@ -10,17 +10,10 @@ public class MySQLConnection implements SQLConnection
 {
     protected Connection connection;
     protected MySQLConnectionData data;
-    protected boolean useLegacy;
-
-    public MySQLConnection(MySQLConnectionData connectionData, boolean useLegacy)
-    {
-        this.data = connectionData;
-        this.useLegacy = useLegacy;
-    }
 
     public MySQLConnection(MySQLConnectionData connectionData)
     {
-        this(connectionData, false);
+        this.data = connectionData;
     }
 
     @Override
@@ -30,7 +23,7 @@ public class MySQLConnection implements SQLConnection
         {
             if(isConnected()) return false;
 
-            if(useLegacy) Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection(
                     "jdbc:mysql://" + data.getHost() + ":" + data.getPort() + "/" + data.getDBName() + "?useSSL=" + data.useSSL(),
                     data.getUsername(), data.getPassword());
@@ -84,15 +77,5 @@ public class MySQLConnection implements SQLConnection
     public MySQLConnectionData getData()
     {
         return data;
-    }
-
-    public boolean isUseLegacy()
-    {
-        return useLegacy;
-    }
-
-    public void setUseLegacy(boolean useLegacy)
-    {
-        this.useLegacy = useLegacy;
     }
 }

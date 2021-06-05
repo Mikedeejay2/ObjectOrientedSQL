@@ -323,7 +323,7 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     {
         try
         {
-            ResultSet resultForeign = database.getMetaData().getExportedKeys(null, null, table.getName());
+            ResultSet resultForeign = database.getMetaData().getImportedKeys(null, null, table.getName());
             while(resultForeign.next())
             {
                 String curName = resultForeign.getString(SQLForeignKeyMeta.PKCOLUMN_NAME.asIndex());
@@ -345,10 +345,11 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     {
         try
         {
-            ResultSet resultForeign = database.getMetaData().getExportedKeys(null, null, table.getName());
+            ResultSet resultForeign = database.getMetaData().getImportedKeys(null, null, table.getName());
             while(resultForeign.next())
             {
                 String curName = resultForeign.getString(SQLForeignKeyMeta.PKCOLUMN_NAME.asIndex());
+                System.out.println("Column Name: " + curName);
                 if(columnName.equals(curName))
                 {
                     return resultForeign.getObject(metaDataType.asIndex(), type);
@@ -387,7 +388,7 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     {
         try
         {
-            ResultSet result = database.getMetaData().getImportedKeys(null, null, table.getName());
+            ResultSet result = database.getMetaData().getPrimaryKeys(null, null, table.getName());
             while(result.next())
             {
                 String curName = result.getString(SQLPrimaryKeyMeta.COLUMN_NAME.asIndex());
@@ -409,7 +410,7 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     {
         try
         {
-            ResultSet result = database.getMetaData().getImportedKeys(null, null, table.getName());
+            ResultSet result = database.getMetaData().getPrimaryKeys(null, null, table.getName());
             while(result.next())
             {
                 String curName = result.getString(SQLPrimaryKeyMeta.COLUMN_NAME.asIndex());

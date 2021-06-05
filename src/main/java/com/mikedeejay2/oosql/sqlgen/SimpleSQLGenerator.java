@@ -110,9 +110,11 @@ public class SimpleSQLGenerator implements SQLGenerator
             String name = curConstraint.get();
             builder.append(", ")
                 .append(name);
-            if(curConstraint.isCheck())
+            if(curConstraint.isForeignKey())
             {
-                builder.append(" REFERENCES ")
+                builder.append(" (`")
+                    .append(curInfo.getName())
+                    .append("`) REFERENCES ")
                     .append(data);
             }
             else

@@ -222,7 +222,7 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     public SQLTableType getTableType()
     {
         String tableTypeStr = getMetaString(SQLTableMeta.TABLE_TYPE);
-        SQLTableType tableType = SQLTableType.valueOf(tableTypeStr);
+        SQLTableType tableType = SQLTableType.valueOf(tableTypeStr.replace(" ", "_"));
         return tableType;
     }
 

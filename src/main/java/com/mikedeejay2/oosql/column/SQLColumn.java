@@ -326,7 +326,7 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
             ResultSet resultForeign = database.getMetaData().getImportedKeys(null, null, table.getName());
             while(resultForeign.next())
             {
-                String curName = resultForeign.getString(SQLForeignKeyMeta.PKCOLUMN_NAME.asIndex());
+                String curName = resultForeign.getString(SQLForeignKeyMeta.FKCOLUMN_NAME.asIndex());
                 if(columnName.equals(curName))
                 {
                     return resultForeign.getObject(metaDataType.asIndex());
@@ -348,7 +348,7 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
             ResultSet resultForeign = database.getMetaData().getImportedKeys(null, null, table.getName());
             while(resultForeign.next())
             {
-                String curName = resultForeign.getString(SQLForeignKeyMeta.PKCOLUMN_NAME.asIndex());
+                String curName = resultForeign.getString(SQLForeignKeyMeta.FKCOLUMN_NAME.asIndex());
                 System.out.println("Column Name: " + curName);
                 if(columnName.equals(curName))
                 {

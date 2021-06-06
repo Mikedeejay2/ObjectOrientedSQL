@@ -14,4 +14,14 @@ public interface SQLExecutorInterface
     ResultSet executeQuery(PreparedStatement statement);
 
     PreparedStatement prepareStatement(String command);
+
+    int[] executeUpdate(String... commands);
+
+    ResultSet[] executeQuery(String... commands);
+
+    int[] executeUpdate(PreparedStatement... statements);
+
+    ResultSet[] executeQuery(PreparedStatement... statements);
+
+    PreparedStatement[] prepareStatement(String... commands);
 }

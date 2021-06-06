@@ -185,17 +185,29 @@ public class SimpleSQLGenerator implements SQLGenerator
             builder.append(getSizesStr(sizes));
         }
 
-        builder.append(";");
-
         SQLConstraints constraints = info.getConstraints();
+        StringBuilder constraintBuilder = new StringBuilder();
         if(constraints != null)
         {
-            SQLConstraintData[] constraintData = constraints.get();
-            if(constraintData.length > 0)
+            for(SQLConstraintData constraintData : constraints)
             {
-                builder.append("\n");
-                builder.append(addConstraints(tableName, info, constraintData));
+                if(constraintData.isDataConstraint())
+                {
+                    builder.append(" ")
+                        .append(constraintData.get());
+                }
+                else
+                {
+                    constraintBuilder.append("\n")
+                        .append(addConstraintInternal(tableName, info, constraintData));
+                }
             }
+        }
+
+        builder.append(";");
+        if(constraintBuilder.length() != 0)
+        {
+            builder.append(constraintBuilder);
         }
 
         return builder.toString();

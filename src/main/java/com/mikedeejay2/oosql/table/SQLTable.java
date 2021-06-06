@@ -127,16 +127,26 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     public boolean addColumn(SQLColumnInfo info)
     {
         String command = generator.addColumn(tableName, info);
-        int code = executor.executeUpdate(command);
-        return code != -1;
+        int[] codes = executor.executeUpdate(command.split("\n"));
+        boolean success = true;
+        for(int code : codes)
+        {
+            success &= code != -1;
+        }
+        return success;
     }
 
     @Override
     public boolean addColumns(SQLColumnInfo... info)
     {
         String command = generator.addColumns(tableName, info);
-        int code = executor.executeUpdate(command);
-        return code != -1;
+        int[] codes = executor.executeUpdate(command.split("\n"));
+        boolean success = true;
+        for(int code : codes)
+        {
+            success &= code != -1;
+        }
+        return success;
     }
 
     @Override

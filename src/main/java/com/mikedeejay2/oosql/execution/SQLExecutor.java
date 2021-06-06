@@ -33,7 +33,6 @@ public class SQLExecutor implements SQLExecutorInterface
         {
             PreparedStatement statement = prepareStatement(command);
             return statement.executeQuery();
-
         }
         catch(SQLException throwables)
         {
@@ -82,6 +81,61 @@ public class SQLExecutor implements SQLExecutorInterface
             throwables.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public int[] executeUpdate(String... commands)
+    {
+        int[] results = new int[commands.length];
+        for(int i = 0; i < commands.length; ++i)
+        {
+            results[i] = executeUpdate(commands[i]);
+        }
+        return results;
+    }
+
+    @Override
+    public ResultSet[] executeQuery(String... commands)
+    {
+        ResultSet[] results = new ResultSet[commands.length];
+        for(int i = 0; i < commands.length; ++i)
+        {
+            results[i] = executeQuery(commands[i]);
+        }
+        return results;
+    }
+
+    @Override
+    public int[] executeUpdate(PreparedStatement... statements)
+    {
+        int[] results = new int[statements.length];
+        for(int i = 0; i < statements.length; ++i)
+        {
+            results[i] = executeUpdate(statements[i]);
+        }
+        return results;
+    }
+
+    @Override
+    public ResultSet[] executeQuery(PreparedStatement... statements)
+    {
+        ResultSet[] results = new ResultSet[statements.length];
+        for(int i = 0; i < statements.length; ++i)
+        {
+            results[i] = executeQuery(statements[i]);
+        }
+        return results;
+    }
+
+    @Override
+    public PreparedStatement[] prepareStatement(String... commands)
+    {
+        PreparedStatement[] results = new PreparedStatement[commands.length];
+        for(int i = 0; i < commands.length; ++i)
+        {
+            results[i] = prepareStatement(commands[i]);
+        }
+        return results;
     }
 
     public Connection getConnection()

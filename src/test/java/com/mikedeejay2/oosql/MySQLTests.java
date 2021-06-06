@@ -142,6 +142,7 @@ public class MySQLTests implements TestInterface
             20,
             new SQLConstraints()
                 .addDefault("unnamedUser")
+                .addUnique()
         );
 
         SQLColumnInfo t1c5 = new SQLColumnInfo(
@@ -164,7 +165,7 @@ public class MySQLTests implements TestInterface
             SQLDataType.DOUBLE,
             "weight",
             new int[]{32, 8},
-            new SQLConstraints()
+            null
         );
 
         SQLConstraints table1C = new SQLConstraints()
@@ -321,6 +322,7 @@ public class MySQLTests implements TestInterface
 
     @Override
     @Test
+    @Order(3)
     public void testGetDataType()
     {
         SQLTable table = database.getTable("users_table");
@@ -339,6 +341,7 @@ public class MySQLTests implements TestInterface
 
     @Override
     @Test
+    @Order(3)
     public void testIsNotNull()
     {
         SQLTable table = database.getTable("users_table");
@@ -358,6 +361,7 @@ public class MySQLTests implements TestInterface
 
     @Override
     @Test
+    @Order(3)
     public void testIsPrimaryKey()
     {
         SQLTable table = database.getTable("users_table");
@@ -374,6 +378,7 @@ public class MySQLTests implements TestInterface
 
     @Override
     @Test
+    @Order(3)
     public void testIsForeignKey()
     {
         SQLTable table = database.getTable("users_table");
@@ -390,6 +395,7 @@ public class MySQLTests implements TestInterface
 
     @Override
     @Test
+    @Order(3)
     public void testHasDefault()
     {
         SQLTable table = database.getTable("users_table");
@@ -406,6 +412,7 @@ public class MySQLTests implements TestInterface
 
     @Override
     @Test
+    @Order(3)
     public void testAutoIncrements()
     {
         SQLTable table = database.getTable("users_table");
@@ -422,6 +429,7 @@ public class MySQLTests implements TestInterface
 
     @Override
     @Test
+    @Order(3)
     public void testGetColumns()
     {
         SQLTable table = database.getTable("users_table");
@@ -441,6 +449,7 @@ public class MySQLTests implements TestInterface
 
     @Override
     @Test
+    @Order(3)
     public void testGetColumnNames()
     {
         SQLTable table = database.getTable("users_table");
@@ -460,27 +469,91 @@ public class MySQLTests implements TestInterface
 
     @Override
     @Test
+    @Order(3)
     public void testHasConstraint()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        SQLColumn column1 = table.getColumn("user_id");
+        SQLColumn column2 = table.getColumn("username");
+        SQLColumn column3 = table.getColumn("weight");
+        assertNotNull(column1);
+        assertNotNull(column2);
+        assertNotNull(column3);
+
+        assertTrue(column1.hasConstraint(SQLConstraint.PRIMARY_KEY));
+        assertTrue(column1.hasConstraint(SQLConstraint.AUTO_INCREMENT));
+        assertTrue(column2.hasConstraint(SQLConstraint.DEFAULT));
+        assertFalse(column3.hasConstraint(SQLConstraint.NOT_NULL));
+        assertTrue(column1.hasConstraint(SQLConstraint.NOT_NULL));
+        assertTrue(column2.hasConstraint(SQLConstraint.UNIQUE));
+        assertFalse(column3.hasConstraint(SQLConstraint.UNIQUE));
+        assertTrue(column1.hasConstraint(SQLConstraint.UNIQUE));
     }
 
     @Override
     @Test
+    @Order(3)
     public void testGetColumnInfo()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        SQLColumn column1 = table.getColumn("user_id");
+        SQLColumn column2 = table.getColumn("username");
+        assertNotNull(column1);
+        assertNotNull(column2);
+
+        SQLColumnInfo info1 = column1.getInfo();
+        SQLColumnInfo info2 = column2.getInfo();
+        assertNotNull(info1);
+        assertNotNull(info2);
+
+        SQLConstraints constraints1 = info1.getConstraints();
+        SQLConstraints constraints2 = info2.getConstraints();
+        assertNotNull(constraints1);
+        assertNotNull(constraints2);
+        assertEquals(2, constraints1.length());
+        assertEquals(2, constraints2.length());
+        assertEquals("user_id", info1.getName());
+        assertEquals("username", info2.getName());
     }
 
     @Override
     @Test
+    @Order(3)
     public void testGetColumnConstraints()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        SQLColumn column1 = table.getColumn("user_id");
+        SQLColumn column2 = table.getColumn("username");
+        assertNotNull(column1);
+        assertNotNull(column2);
+
+        SQLConstraints constraints1 = column1.getConstraints();
+        SQLConstraints constraints2 = column2.getConstraints();
+        assertNotNull(constraints1);
+        assertNotNull(constraints2);
+        assertEquals(2, constraints1.length());
+        assertEquals(2, constraints2.length());
+        SQLConstraintData first1 = constraints1.get(0);
+        SQLConstraintData first2 = constraints2.get(0);
+        assertNotNull(first1);
+        assertNotNull(first2);
+        SQLConstraint constraint1 = first1.getConstraint();
+        SQLConstraint constraint2 = first2.getConstraint();
+        assertNotNull(constraint1);
+        assertNotNull(constraint2);
+        assertSame(constraint1, SQLConstraint.PRIMARY_KEY);
+        assertSame(constraint2, SQLConstraint.UNIQUE);
     }
 
     @Override
     @Test
+    @Order(3)
     public void testGetDefault()
     {
 

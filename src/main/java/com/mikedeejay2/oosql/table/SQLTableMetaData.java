@@ -2,9 +2,9 @@ package com.mikedeejay2.oosql.table;
 
 import com.mikedeejay2.oosql.column.SQLColumn;
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
-import com.mikedeejay2.oosql.table.index.SQLIndexInfoMeta;
-import com.mikedeejay2.oosql.table.index.SQLIndexInfoMetaGetter;
-import com.mikedeejay2.oosql.table.index.SQLMetaDataGetter;
+import com.mikedeejay2.oosql.misc.index.SQLIndexInfoMeta;
+import com.mikedeejay2.oosql.misc.index.SQLIndexInfoMetaGetter;
+import com.mikedeejay2.oosql.misc.SQLMetaDataGetter;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 
 public interface SQLTableMetaData extends SQLMetaDataGetter<SQLTableMeta>, SQLIndexInfoMetaGetter<SQLIndexInfoMeta>

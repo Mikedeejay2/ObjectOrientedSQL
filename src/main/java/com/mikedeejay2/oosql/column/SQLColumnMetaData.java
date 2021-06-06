@@ -5,7 +5,7 @@ import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.column.key.*;
 import com.mikedeejay2.oosql.table.SQLTable;
-import com.mikedeejay2.oosql.table.index.SQLMetaDataGetter;
+import com.mikedeejay2.oosql.misc.SQLMetaDataGetter;
 
 public interface SQLColumnMetaData extends SQLMetaDataGetter<SQLColumnMeta>,
     SQLPrimaryKeyMetaGetter<SQLPrimaryKeyMeta>,

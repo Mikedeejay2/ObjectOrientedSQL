@@ -8,6 +8,7 @@ import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.column.key.SQLForeignKeyMeta;
 import com.mikedeejay2.oosql.column.key.SQLPrimaryKeyMeta;
+import com.mikedeejay2.oosql.misc.index.SQLIndexInfoMeta;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
 import com.mikedeejay2.oosql.table.SQLTable;
 
@@ -225,8 +226,8 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     @Deprecated
     public boolean isUnique()
     {
-        // TODO: How do we get unique? It isn't found anywhere in metadata.
-        return isPrimaryKey();
+        return (table.indexInfoExists(columnName) && !table.getIndexInfoMetaBoolean(columnName, SQLIndexInfoMeta.NON_UNIQUE))
+            || isPrimaryKey();
     }
 
     @Override
@@ -349,7 +350,6 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
             while(resultForeign.next())
             {
                 String curName = resultForeign.getString(SQLForeignKeyMeta.FKCOLUMN_NAME.asIndex());
-                System.out.println("Column Name: " + curName);
                 if(columnName.equals(curName))
                 {
                     return resultForeign.getObject(metaDataType.asIndex(), type);

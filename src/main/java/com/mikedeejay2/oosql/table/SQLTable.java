@@ -9,7 +9,7 @@ import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.sqlgen.SQLGenerator;
-import com.mikedeejay2.oosql.table.index.SQLIndexInfoMeta;
+import com.mikedeejay2.oosql.misc.index.SQLIndexInfoMeta;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -404,14 +404,17 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     }
 
     @Override
-    public Object getIndexInfoMetaObject(SQLIndexInfoMeta metaDataType)
+    public Object getIndexInfoMetaObject(String keyName, SQLIndexInfoMeta metaDataType)
     {
         try
         {
             ResultSet result = database.getMetaData().getIndexInfo(null, null, tableName, false, true);
-            if(result.next())
+            while(result.next())
             {
-                return result.getObject(metaDataType.asIndex());
+                if(keyName.equals(result.getString(SQLIndexInfoMeta.INDEX_NAME.asIndex())))
+                {
+                    return result.getObject(metaDataType.asIndex());
+                }
             }
         }
         catch(SQLException throwables)
@@ -422,14 +425,17 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     }
 
     @Override
-    public <R> R getIndexInfoMetaObject(SQLIndexInfoMeta metaDataType, Class<R> type)
+    public <R> R getIndexInfoMetaObject(String keyName, SQLIndexInfoMeta metaDataType, Class<R> type)
     {
         try
         {
             ResultSet result = database.getMetaData().getIndexInfo(null, null, tableName, false, true);
-            if(result.next())
+            while(result.next())
             {
-                return result.getObject(metaDataType.asIndex(), type);
+                if(keyName.equals(result.getString(SQLIndexInfoMeta.INDEX_NAME.asIndex())))
+                {
+                    return result.getObject(metaDataType.asIndex(), type);
+                }
             }
         }
         catch(SQLException throwables)
@@ -440,26 +446,53 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData
     }
 
     @Override
-    public String getIndexInfoMetaString(SQLIndexInfoMeta metaDataType)
+    public String getIndexInfoMetaString(String keyName, SQLIndexInfoMeta metaDataType)
     {
-        return getIndexInfoMetaObject(metaDataType, String.class);
+        return getIndexInfoMetaObject(keyName, metaDataType, String.class);
     }
 
     @Override
-    public int getIndexInfoMetaInt(SQLIndexInfoMeta metaDataType)
+    public int getIndexInfoMetaInt(String keyName, SQLIndexInfoMeta metaDataType)
     {
-        return getIndexInfoMetaObject(metaDataType, Integer.class);
+        return getIndexInfoMetaObject(keyName, metaDataType, Integer.class);
     }
 
     @Override
-    public short getIndexInfoMetaShort(SQLIndexInfoMeta metaDataType)
+    public short getIndexInfoMetaShort(String keyName, SQLIndexInfoMeta metaDataType)
     {
-        return getIndexInfoMetaObject(metaDataType, Short.class);
+        return getIndexInfoMetaObject(keyName, metaDataType, Short.class);
     }
 
     @Override
-    public long getIndexInfoMetaLong(SQLIndexInfoMeta metaDataType)
+    public long getIndexInfoMetaLong(String keyName, SQLIndexInfoMeta metaDataType)
     {
-        return getIndexInfoMetaObject(metaDataType, Long.class);
+        return getIndexInfoMetaObject(keyName, metaDataType, Long.class);
+    }
+
+    @Override
+    public boolean getIndexInfoMetaBoolean(String keyName, SQLIndexInfoMeta metaDataType)
+    {
+        return getIndexInfoMetaObject(keyName, metaDataType, Boolean.class);
+    }
+
+    @Override
+    public boolean indexInfoExists(String keyName)
+    {
+        try
+        {
+            ResultSet result = database.getMetaData().getIndexInfo(null, null, tableName, false, true);
+            while(result.next())
+            {
+                if(keyName.equals(result.getString(SQLIndexInfoMeta.INDEX_NAME.asIndex())))
+                {
+                    return true;
+                }
+            }
+        }
+        catch(SQLException throwables)
+        {
+            throwables.printStackTrace();
+        }
+        return false;
     }
 }

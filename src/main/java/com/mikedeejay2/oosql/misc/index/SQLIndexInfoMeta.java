@@ -1,4 +1,4 @@
-package com.mikedeejay2.oosql.table.index;
+package com.mikedeejay2.oosql.misc.index;
 
 public enum SQLIndexInfoMeta
 {

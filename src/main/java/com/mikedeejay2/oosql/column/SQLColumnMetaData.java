@@ -33,7 +33,19 @@ public interface SQLColumnMetaData extends SQLMetaDataGetter<SQLColumnMeta>,
 
     SQLConstraints getConstraints();
 
-    String getDefault();
+    Object getDefault();
+
+    <R> R getDefault(Class<R> type);
+
+    String getDefaultString();
+
+    int getDefaultInt();
+
+    float getDefaultFloat();
+
+    double getDefaultDouble();
+
+    boolean getDefaultBoolean();
 
     String getReferenceTableName();
 

@@ -361,7 +361,7 @@ public class SimpleSQLGenerator implements SQLGenerator
         StringBuilder builder = new StringBuilder();
         builder.append("ALTER TABLE `")
             .append(tableName)
-            .append("` MODIFY COLUMN `")
+            .append("` MODIFY `")
             .append(info.getName())
             .append("` ")
             .append(info.getType().getName());
@@ -390,11 +390,16 @@ public class SimpleSQLGenerator implements SQLGenerator
     private String addConstraintInternal(String tableName, SQLColumnInfo info, SQLConstraintData constraint)
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("ALTER TABLE `").append(tableName).append("` ");
+        builder.append("ALTER TABLE `")
+            .append(tableName)
+            .append("` ");
 
         if(constraint.isDefault())
         {
-            builder.append("SET ");
+            builder
+                .append("ALTER `")
+                .append(info.getName())
+                .append("` SET ");
         }
         else
         {

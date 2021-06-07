@@ -69,8 +69,13 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     public boolean addConstraints(SQLConstraintData... constraints)
     {
         String command = generator.addConstraints(table.getName(), getInfo(), constraints);
-        int code = executor.executeUpdate(command);
-        return code != -1;
+        int[] codes = executor.executeUpdate(command.split("\n"));
+        boolean success = true;
+        for(int code : codes)
+        {
+            success &= code != -1;
+        }
+        return success;
     }
 
     @Override
@@ -213,7 +218,7 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
     @Override
     public boolean hasDefault()
     {
-        return getMetaString(SQLColumnMeta.COLUMN_DEF) != null;
+        return getMetaObject(SQLColumnMeta.COLUMN_DEF) != null;
     }
 
     @Override
@@ -273,16 +278,52 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData
         if(isUnique && !isPrimaryKey) constraints.addUnique();
         if(isPrimaryKey) constraints.addPrimaryKey();
         if(isForeignKey) constraints.addForeignKey(getReferenceTableName(), getReferenceColumnName());
-        if(hasDefault) constraints.addDefault(getDefault());
+        if(hasDefault) constraints.addDefault(String.valueOf(getDefault()));
         if(autoIncrements) constraints.addAutoIncrement();
 
         return constraints;
     }
 
     @Override
-    public String getDefault()
+    public Object getDefault()
     {
-        return getMetaString(SQLColumnMeta.COLUMN_DEF);
+        return getMetaObject(SQLColumnMeta.COLUMN_DEF);
+    }
+
+    @Override
+    public <R> R getDefault(Class<R> type)
+    {
+        return getMetaObject(SQLColumnMeta.COLUMN_DEF, type);
+    }
+
+    @Override
+    public String getDefaultString()
+    {
+        return getDefault(String.class);
+    }
+
+    @Override
+    public int getDefaultInt()
+    {
+        return getDefault(Integer.class);
+    }
+
+    @Override
+    public float getDefaultFloat()
+    {
+        return getDefault(Float.class);
+    }
+
+    @Override
+    public double getDefaultDouble()
+    {
+        return getDefault(Double.class);
+    }
+
+    @Override
+    public boolean getDefaultBoolean()
+    {
+        return getDefault(Boolean.class);
     }
 
     @Override

@@ -333,7 +333,7 @@ public class OOSQLTest
     {
         SQLTable table = database.getTable("test_table");
         SQLColumn column = table.getColumn("username");
-        String columnDefault = column.getDefault();
+        String columnDefault = column.getDefaultString();
         assertNotNull(columnDefault);
         assertEquals(columnDefault, "ARandomUser");
     }

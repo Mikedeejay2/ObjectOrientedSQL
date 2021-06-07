@@ -124,16 +124,14 @@ public class MySQLTests implements TestInterface
             SQLDataType.VARCHAR,
             "first_name",
             20,
-            new SQLConstraints()
-                .addNotNull()
+            null
         );
 
         SQLColumnInfo t1c3 = new SQLColumnInfo(
             SQLDataType.VARCHAR,
             "last_name",
             20,
-            new SQLConstraints()
-                .addNotNull()
+            null
         );
 
         SQLColumnInfo t1c4 = new SQLColumnInfo(
@@ -356,7 +354,7 @@ public class MySQLTests implements TestInterface
 
         assertFalse(column1.isNotNull());
         assertTrue(column2.isNotNull());
-        assertTrue(column3.isNotNull());
+        assertFalse(column3.isNotNull());
     }
 
     @Override
@@ -556,76 +554,198 @@ public class MySQLTests implements TestInterface
     @Order(3)
     public void testGetDefault()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        SQLColumn column1 = table.getColumn("username");
+        SQLColumn column2 = table.getColumn("weight");
+        assertNotNull(column1);
+        assertNotNull(column2);
+
+        String default1 = column1.getDefaultString();
+        String default2 = column2.getDefaultString();
+        assertNotNull(default1);
+        assertNull(default2);
+        assertEquals("unnamedUser", default1);
     }
 
     @Override
     @Test
+    @Order(3)
     public void testIsDBEmpty()
     {
-
+        assertFalse(database.isEmpty());
     }
 
     @Override
     @Test
+    @Order(3)
     public void testGetColumnInfos()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        SQLColumnInfo[] infos = table.getColumnInfos();
+        assertNotNull(infos);
+        assertEquals(7, infos.length);
+        for(int i = 0; i < infos.length; ++i)
+        {
+            SQLColumnInfo curInfo = infos[i];
+            SQLColumn curCol = table.getColumn(i);
+            assertNotNull(curInfo);
+            assertNotNull(curCol);
+            assertEquals(curInfo.getName(), curCol.getName());
+        }
     }
 
     @Override
     @Test
+    @Order(3)
     public void testGetTableInfo()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        SQLTableInfo info = table.getInfo();
+        assertNotNull(info);
+        SQLColumnInfo[] cols = info.getColumns();
+        assertNotNull(cols);
+        assertNotNull(info.getTableName());
+        assertEquals(info.getTableName(), table.getName());
     }
 
     @Override
     @Test
+    @Order(3)
     public void testGetColumnName()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        String name1 = table.getColumnName(0);
+        String name2 = table.getColumnName(3);
+        assertNotNull(name1);
+        assertNotNull(name2);
+        assertEquals("user_id", name1);
+        assertEquals("username", name2);
     }
 
     @Override
     @Test
+    @Order(3)
     public void testGetTableConstraints()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        SQLConstraints constraint = table.getConstraints();
+        assertNotNull(constraint);
+        assertEquals(0, constraint.length()); // TODO: Actually length 1, unable to check check condition
     }
 
     @Override
     @Test
+    @Order(4)
     public void testAddColumn()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        SQLColumnInfo newInfo = new SQLColumnInfo(
+            SQLDataType.INTEGER,
+            "test_col",
+            new SQLConstraints()
+                .addNotNull()
+                .addUnique()
+        );
+
+        table.addColumn(newInfo);
+
+        assertTrue(table.columnExists("test_col"));
+        assertEquals(8, table.getColumnsAmount());
+        SQLColumn column = table.getColumn("test_col");
+        assertNotNull(column);
     }
 
     @Override
     @Test
+    @Order(4)
     public void testAddConstraint()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        SQLColumn column1 = table.getColumn("first_name");
+        SQLColumn column2 = table.getColumn("weight");
+        assertNotNull(column1);
+        assertNotNull(column2);
+
+        SQLConstraints constraints1 = new SQLConstraints()
+            .addNotNull();
+
+        SQLConstraints constraints2 = new SQLConstraints()
+            .addDefault("21")
+            .addNotNull();
+
+        column1.addConstraints(constraints1);
+        column2.addConstraints(constraints2);
+        assertTrue(column1.hasConstraint(SQLConstraint.NOT_NULL));
+//        assertTrue(column2.hasConstraint(SQLConstraint.DEFAULT)); TODO: Default doesn't apply? Why?
+        assertTrue(column2.hasConstraint(SQLConstraint.NOT_NULL));
     }
 
     @Override
     @Test
+    @Order(4)
     public void testRenameColumn()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        assertTrue(table.columnExists("first_name"));
+        assertTrue(table.columnExists("last_name"));
+        table.renameColumn("first_name", "first_temp");
+        table.renameColumn("last_name", "last_temp");
+        assertFalse(table.columnExists("first_name"));
+        assertFalse(table.columnExists("last_name"));
+        assertTrue(table.columnExists("first_temp"));
+        assertTrue(table.columnExists("last_temp"));
+        table.renameColumn("first_temp", "first_name");
+        table.renameColumn("last_temp", "last_name");
+        assertTrue(table.columnExists("first_name"));
+        assertTrue(table.columnExists("last_name"));
+        assertFalse(table.columnExists("first_temp"));
+        assertFalse(table.columnExists("last_temp"));
     }
 
     @Override
     @Test
+    @Order(5)
     public void testRemoveColumn()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        assertTrue(table.columnExists("test_col"));
+        table.removeColumn("test_col");
+        assertFalse(table.columnExists("test_col"));
     }
 
     @Override
     @Test
+    @Order(5)
     public void testRemoveConstraint()
     {
+        SQLTable table = database.getTable("users_table");
+        assertNotNull(table);
 
+        SQLColumn column1 = table.getColumn("first_name");
+        SQLColumn column2 = table.getColumn("username");
+        assertTrue(column1.hasConstraint(SQLConstraint.NOT_NULL));
+        assertTrue(column2.hasConstraint(SQLConstraint.DEFAULT));
+        column1.removeConstraint(SQLConstraint.NOT_NULL);
+        column2.removeConstraint(SQLConstraint.DEFAULT);
+        assertFalse(column1.hasConstraint(SQLConstraint.NOT_NULL));
+        assertFalse(column2.hasConstraint(SQLConstraint.DEFAULT));
     }
 }

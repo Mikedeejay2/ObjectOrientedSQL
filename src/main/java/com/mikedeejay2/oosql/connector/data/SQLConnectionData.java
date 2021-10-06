@@ -1,5 +1,6 @@
 package com.mikedeejay2.oosql.connector.data;
 
+import com.mikedeejay2.oosql.connector.SQLConnection;
 import com.mikedeejay2.oosql.misc.SQLType;
 
 public abstract class SQLConnectionData
@@ -26,5 +27,10 @@ public abstract class SQLConnectionData
     public SQLType getType()
     {
         return type;
+    }
+
+    public SQLConnection createConnection()
+    {
+        return type.createConnection(this);
     }
 }

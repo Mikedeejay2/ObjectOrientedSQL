@@ -45,18 +45,9 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     public boolean connect(boolean throwErrors)
     {
         if(isConnected()) return false;
-        switch(connectionData.getType())
-        {
-            case MYSQL:
-                if(connection == null) this.connection = new MySQLConnection((MySQLConnectionData) connectionData);
-                executor.setSQLConnection(connection);
-                return connection.connect(throwErrors);
-            case SQLITE:
-                if(connection == null) this.connection = new SQLiteConnection((SQLiteConnectionData) connectionData);
-                executor.setSQLConnection(connection);
-                return connection.connect(throwErrors);
-        }
-        return false;
+        if(connection == null) this.connection = connectionData.createConnection();
+        executor.setSQLConnection(connection);
+        return connection.connect(throwErrors);
     }
 
     @Override

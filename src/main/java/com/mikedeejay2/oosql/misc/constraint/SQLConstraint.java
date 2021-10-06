@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.misc.constraint;
 
-public enum SQLConstraint
-{
+public enum SQLConstraint {
     // Ensures that a column can not contain a NULL value
     NOT_NULL      ("NOT NULL"      , false, false, true , false),
     // Ensures that each value in a column are different
@@ -24,8 +23,7 @@ public enum SQLConstraint
     private final boolean dataConstraint;
     private final boolean reference;
 
-    SQLConstraint(String value, boolean tableConstraint, boolean useParams, boolean dataConstraint, boolean reference)
-    {
+    SQLConstraint(String value, boolean tableConstraint, boolean useParams, boolean dataConstraint, boolean reference) {
         this.value = value;
         this.tableConstraint = tableConstraint;
         this.useParams = useParams;
@@ -33,28 +31,23 @@ public enum SQLConstraint
         this.reference = reference;
     }
 
-    public String get()
-    {
+    public String get() {
         return value;
     }
 
-    public boolean isTableConstraint()
-    {
+    public boolean isTableConstraint() {
         return tableConstraint;
     }
 
-    public boolean useParams()
-    {
+    public boolean useParams() {
         return useParams;
     }
 
-    public boolean isDataConstraint()
-    {
+    public boolean isDataConstraint() {
         return dataConstraint;
     }
 
-    public boolean useReference()
-    {
+    public boolean useReference() {
         return reference;
     }
 }

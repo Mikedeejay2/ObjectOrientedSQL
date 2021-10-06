@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.column.key;
 
-public enum SQLPrimaryKeyMeta
-{
+public enum SQLPrimaryKeyMeta {
     // TABLE_CAT String => table catalog (may be null)
     TABLE_CAT("TABLE_CAT", 1),
     // TABLE_SCHEM String => table schema (may be null)
@@ -19,19 +18,16 @@ public enum SQLPrimaryKeyMeta
     private final String str;
     private final int index;
 
-    SQLPrimaryKeyMeta(String str, int index)
-    {
+    SQLPrimaryKeyMeta(String str, int index) {
         this.str = str;
         this.index = index;
     }
 
-    public String asString()
-    {
+    public String asString() {
         return str;
     }
 
-    public int asIndex()
-    {
+    public int asIndex() {
         return index;
     }
 }

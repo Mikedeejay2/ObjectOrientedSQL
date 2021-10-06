@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.misc;
 
-public interface SQLMetaDataGetter<T>
-{
+public interface SQLMetaDataGetter<T> {
     Object getMetaObject(T metaDataType);
 
     <R> R getMetaObject(T metaDataType, Class<R> type);

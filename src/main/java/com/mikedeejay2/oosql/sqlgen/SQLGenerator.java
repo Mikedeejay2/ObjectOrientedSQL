@@ -3,11 +3,9 @@ package com.mikedeejay2.oosql.sqlgen;
 import com.mikedeejay2.oosql.column.SQLColumnInfo;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
-import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.table.SQLTableInfo;
 
-public interface SQLGenerator
-{
+public interface SQLGenerator {
     String createTable(SQLTableInfo info);
 
     String dropTable(String tableName);

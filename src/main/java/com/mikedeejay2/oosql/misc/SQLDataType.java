@@ -3,8 +3,7 @@ package com.mikedeejay2.oosql.misc;
 import java.math.BigDecimal;
 import java.sql.*;
 
-public enum SQLDataType
-{
+public enum SQLDataType {
     BIT("BIT", -7, Boolean.class),
     TINYINT("TINYINT", -6, Byte.class),
     SMALLINT("SMALLINT", 5, Short.class),
@@ -51,43 +50,35 @@ public enum SQLDataType
     private final Class<?> type;
     private final boolean array;
 
-    SQLDataType(String value, int nativeValue, Class<?> type, boolean array)
-    {
+    SQLDataType(String value, int nativeValue, Class<?> type, boolean array) {
         this.name = value;
         this.nativeValue = nativeValue;
         this.type = type;
         this.array = array;
     }
 
-    SQLDataType(String value, int nativeValue, Class<?> type)
-    {
+    SQLDataType(String value, int nativeValue, Class<?> type) {
         this(value, nativeValue, type, false);
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public int getNativeValue()
-    {
+    public int getNativeValue() {
         return nativeValue;
     }
 
-    public Class<?> getType()
-    {
+    public Class<?> getType() {
         return type;
     }
 
-    public boolean isArray()
-    {
+    public boolean isArray() {
         return array;
     }
 
-    public static SQLDataType fromNative(int nativeValue)
-    {
-        for(SQLDataType type : SQLDataType.values())
-        {
+    public static SQLDataType fromNative(int nativeValue) {
+        for(SQLDataType type : SQLDataType.values()) {
             if(type.nativeValue == nativeValue) return type;
         }
         return null;

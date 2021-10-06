@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.table;
 
-public enum SQLTableMeta
-{
+public enum SQLTableMeta {
     // String => table catalog (may be null)
     TABLE_CAT("TABLE_CAT", 1),
     // String => table schema (may be null)
@@ -27,19 +26,16 @@ public enum SQLTableMeta
     private final String str;
     private final int index;
 
-    SQLTableMeta(String str, int index)
-    {
+    SQLTableMeta(String str, int index) {
         this.str = str;
         this.index = index;
     }
 
-    public String asString()
-    {
+    public String asString() {
         return str;
     }
 
-    public int asIndex()
-    {
+    public int asIndex() {
         return index;
     }
 }

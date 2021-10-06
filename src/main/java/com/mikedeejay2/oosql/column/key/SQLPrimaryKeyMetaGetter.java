@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.column.key;
 
-public interface SQLPrimaryKeyMetaGetter<T>
-{
+public interface SQLPrimaryKeyMetaGetter<T> {
     Object getPrimaryKeyMetaObject(T metaDataType);
 
     <R> R getPrimaryKeyMetaObject(T metaDataType, Class<R> type);

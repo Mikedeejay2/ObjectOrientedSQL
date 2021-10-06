@@ -9,8 +9,7 @@ import com.mikedeejay2.oosql.table.SQLTableInfo;
 
 import java.sql.*;
 
-interface SQLDatabaseInterface extends SQLObject
-{
+interface SQLDatabaseInterface extends SQLObject {
     void setInfo(SQLConnectionData data);
 
     boolean connect(boolean throwErrors);

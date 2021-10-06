@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.misc.index;
 
-public interface SQLIndexInfoMetaGetter<T>
-{
+public interface SQLIndexInfoMetaGetter<T> {
     Object getIndexInfoMetaObject(String keyName, T metaDataType);
 
     <R> R getIndexInfoMetaObject(String keyName, T metaDataType, Class<R> type);

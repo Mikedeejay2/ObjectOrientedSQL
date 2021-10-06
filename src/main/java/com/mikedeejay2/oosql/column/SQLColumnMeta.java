@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.column;
 
-public enum SQLColumnMeta
-{
+public enum SQLColumnMeta {
     // String => table catalog (may be null)
     TABLE_CAT("TABLE_CAT", 1),
     // String => table schema (may be null)
@@ -67,19 +66,16 @@ public enum SQLColumnMeta
     private final String str;
     private final int index;
 
-    SQLColumnMeta(String str, int index)
-    {
+    SQLColumnMeta(String str, int index) {
         this.str = str;
         this.index = index;
     }
 
-    public String asString()
-    {
+    public String asString() {
         return str;
     }
 
-    public int asIndex()
-    {
+    public int asIndex() {
         return index;
     }
 }

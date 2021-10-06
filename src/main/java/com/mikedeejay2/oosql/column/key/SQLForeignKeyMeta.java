@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.column.key;
 
-public enum SQLForeignKeyMeta
-{
+public enum SQLForeignKeyMeta {
     // PKTABLE_CAT String => primary key table catalog (may be null)
     PKTABLE_CAT("PKTABLE_CAT", 1),
     // PKTABLE_SCHEM String => primary key table schema (may be null)
@@ -49,19 +48,16 @@ public enum SQLForeignKeyMeta
     private final String str;
     private final int index;
 
-    SQLForeignKeyMeta(String str, int index)
-    {
+    SQLForeignKeyMeta(String str, int index) {
         this.str = str;
         this.index = index;
     }
 
-    public String asString()
-    {
+    public String asString() {
         return str;
     }
 
-    public int asIndex()
-    {
+    public int asIndex() {
         return index;
     }
 }

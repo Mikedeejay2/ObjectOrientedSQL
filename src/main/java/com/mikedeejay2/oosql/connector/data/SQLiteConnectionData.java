@@ -4,30 +4,25 @@ import com.mikedeejay2.oosql.misc.SQLType;
 
 import java.io.File;
 
-public class SQLiteConnectionData extends SQLConnectionData
-{
+public class SQLiteConnectionData extends SQLConnectionData {
     protected File dbFile;
 
-    public SQLiteConnectionData(String dbName, File dbFile)
-    {
+    public SQLiteConnectionData(String dbName, File dbFile) {
         super(dbName, SQLType.SQLITE);
 
         this.dbFile = dbFile;
     }
 
-    public File getDbFile()
-    {
+    public File getDbFile() {
         return dbFile;
     }
 
-    public void setDbFile(File dbFile)
-    {
+    public void setDbFile(File dbFile) {
         this.dbFile = dbFile;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return dbName + ", " + dbFile.getPath();
     }
 }

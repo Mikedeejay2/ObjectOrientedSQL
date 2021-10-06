@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.misc.constraint;
 
-public class SQLConstraintData
-{
+public class SQLConstraintData {
     protected static final SQLConstraintData NOT_NULL = new SQLConstraintData(SQLConstraint.NOT_NULL);
     protected static final SQLConstraintData UNIQUE = new SQLConstraintData(SQLConstraint.UNIQUE);
     protected static final SQLConstraintData AUTO_INCREMENT = new SQLConstraintData(SQLConstraint.AUTO_INCREMENT);
@@ -16,8 +15,7 @@ public class SQLConstraintData
     protected final String referenceTable;
     protected final String referenceColumn;
 
-    private SQLConstraintData(SQLConstraint constraint, String checkCondition, String defaultValue, String referenceTable, String referenceColumn)
-    {
+    private SQLConstraintData(SQLConstraint constraint, String checkCondition, String defaultValue, String referenceTable, String referenceColumn) {
         this.constraint = constraint;
         this.checkCondition = checkCondition;
         this.defaultValue = defaultValue;
@@ -25,130 +23,103 @@ public class SQLConstraintData
         this.referenceColumn = referenceColumn;
     }
 
-    private SQLConstraintData(SQLConstraint constraint)
-    {
+    private SQLConstraintData(SQLConstraint constraint) {
         this(constraint, null, null, null, null);
     }
 
-    public String get()
-    {
+    public String get() {
         return constraint.get();
     }
 
-    public SQLConstraint getConstraint()
-    {
+    public SQLConstraint getConstraint() {
         return constraint;
     }
 
-    public String getCheckCondition()
-    {
+    public String getCheckCondition() {
         return checkCondition;
     }
 
-    public String getDefaultValue()
-    {
+    public String getDefaultValue() {
         return defaultValue;
     }
 
-    public String getReferenceTable()
-    {
+    public String getReferenceTable() {
         return referenceTable;
     }
 
-    public String getReferenceColumn()
-    {
+    public String getReferenceColumn() {
         return referenceColumn;
     }
 
-    public boolean isNotNull()
-    {
+    public boolean isNotNull() {
         return constraint == SQLConstraint.NOT_NULL;
     }
 
-    public boolean isUnique()
-    {
+    public boolean isUnique() {
         return constraint == SQLConstraint.UNIQUE;
     }
 
-    public boolean isPrimaryKey()
-    {
+    public boolean isPrimaryKey() {
         return constraint == SQLConstraint.PRIMARY_KEY;
     }
 
-    public boolean isForeignKey()
-    {
+    public boolean isForeignKey() {
         return constraint == SQLConstraint.FOREIGN_KEY;
     }
 
-    public boolean isCheck()
-    {
+    public boolean isCheck() {
         return constraint == SQLConstraint.CHECK;
     }
 
-    public boolean isDefault()
-    {
+    public boolean isDefault() {
         return constraint == SQLConstraint.DEFAULT;
     }
 
-    public boolean isAutoIncrement()
-    {
+    public boolean isAutoIncrement() {
         return constraint == SQLConstraint.AUTO_INCREMENT;
     }
 
-    public boolean isTableConstraint()
-    {
+    public boolean isTableConstraint() {
         return constraint.isTableConstraint();
     }
 
-    public boolean useParams()
-    {
+    public boolean useParams() {
         return constraint.useParams();
     }
 
-    public boolean isDataConstraint()
-    {
+    public boolean isDataConstraint() {
         return constraint.isDataConstraint();
     }
 
-    public boolean useReference()
-    {
+    public boolean useReference() {
         return constraint.useReference();
     }
 
-
-
-    public static SQLConstraintData ofNotNull()
-    {
+    public static SQLConstraintData ofNotNull() {
         return NOT_NULL;
     }
 
-    public static SQLConstraintData ofUnique()
-    {
+    public static SQLConstraintData ofUnique() {
         return UNIQUE;
     }
 
-    public static SQLConstraintData ofPrimaryKey()
-    {
+    public static SQLConstraintData ofPrimaryKey() {
         return PRIMARY_KEY;
     }
 
-    public static SQLConstraintData ofForeignKey(String referenceTable, String referenceColumn)
-    {
+    public static SQLConstraintData ofForeignKey(String referenceTable, String referenceColumn) {
         return new SQLConstraintData(SQLConstraint.FOREIGN_KEY, null, null, referenceTable, referenceColumn);
     }
 
-    public static SQLConstraintData ofCheck(String checkCondition)
-    {
+    public static SQLConstraintData ofCheck(String checkCondition) {
         return new SQLConstraintData(SQLConstraint.CHECK, checkCondition, null, null, null);
     }
 
-    public static SQLConstraintData ofDefault(String defaultValue)
-    {
+    public static SQLConstraintData ofDefault(String defaultValue) {
         return new SQLConstraintData(SQLConstraint.DEFAULT, null, defaultValue, null, null);
     }
 
-    public static SQLConstraintData ofAutoIncrement()
-    {
+    public static SQLConstraintData ofAutoIncrement() {
         return AUTO_INCREMENT;
     }
 }

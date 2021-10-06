@@ -8,8 +8,7 @@ import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 
-public interface SQLTableInterface extends SQLObject
-{
+public interface SQLTableInterface extends SQLObject {
     SQLColumn[] getColumns();
 
     String[] getColumnNames();

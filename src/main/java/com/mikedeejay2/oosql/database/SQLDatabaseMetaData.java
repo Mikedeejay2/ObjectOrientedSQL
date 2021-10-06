@@ -5,8 +5,7 @@ import com.mikedeejay2.oosql.table.SQLTableType;
 
 import java.sql.DatabaseMetaData;
 
-public interface SQLDatabaseMetaData
-{
+public interface SQLDatabaseMetaData {
     DatabaseMetaData getMetaData();
 
     String[] getCatalogs();

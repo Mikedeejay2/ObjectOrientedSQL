@@ -9,8 +9,7 @@ import com.mikedeejay2.oosql.misc.SQLMetaDataGetter;
 
 public interface SQLColumnMetaData extends SQLMetaDataGetter<SQLColumnMeta>,
     SQLPrimaryKeyMetaGetter<SQLPrimaryKeyMeta>,
-    SQLForeignKeyMetaGetter<SQLForeignKeyMeta>
-{
+    SQLForeignKeyMetaGetter<SQLForeignKeyMeta> {
     SQLDataType getDataType();
 
     int[] getSizes();
@@ -54,6 +53,4 @@ public interface SQLColumnMetaData extends SQLMetaDataGetter<SQLColumnMeta>,
     String getReferenceColumnName();
 
     SQLColumn getReferenceColumn();
-
-
 }

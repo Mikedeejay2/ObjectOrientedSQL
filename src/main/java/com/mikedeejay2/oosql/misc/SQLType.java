@@ -10,8 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 
-public enum SQLType
-{
+public enum SQLType {
     MYSQL(MySQLConnection.class, MySQLConnectionData.class),
     SQLITE(SQLiteConnection.class, SQLiteConnectionData.class),
     ;
@@ -20,36 +19,27 @@ public enum SQLType
     private final Class<? extends SQLConnectionData> dataClass;
     private final Constructor<? extends SQLConnection> constructor;
 
-    SQLType(Class<? extends SQLConnection> connectClass, Class<? extends SQLConnectionData> dataClass)
-    {
+    SQLType(Class<? extends SQLConnection> connectClass, Class<? extends SQLConnectionData> dataClass) {
         this.connectClass = connectClass;
         this.dataClass = dataClass;
         this.constructor = getConstructor();
     }
 
-    public SQLConnection createConnection(SQLConnectionData data)
-    {
-        try
-        {
+    public SQLConnection createConnection(SQLConnectionData data) {
+        try {
             return constructor.newInstance(data);
-        }
-        catch(ReflectiveOperationException e)
-        {
+        } catch(ReflectiveOperationException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @Nullable
-    private Constructor<? extends SQLConnection> getConstructor()
-    {
+    private Constructor<? extends SQLConnection> getConstructor() {
         Constructor<? extends SQLConnection> constructor = null;
-        try
-        {
+        try {
             constructor = connectClass.getConstructor(dataClass);
-        }
-        catch(NoSuchMethodException e)
-        {
+        } catch(NoSuchMethodException e) {
             e.printStackTrace();
         }
         return constructor;

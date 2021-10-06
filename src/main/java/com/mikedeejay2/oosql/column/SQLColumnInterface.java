@@ -7,8 +7,7 @@ import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.table.SQLTable;
 
-public interface SQLColumnInterface extends SQLObject
-{
+public interface SQLColumnInterface extends SQLObject {
     SQLTable getParentTable();
 
     SQLDatabase getDatabase();

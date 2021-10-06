@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.table;
 
-public enum SQLTableType
-{
+public enum SQLTableType {
     TABLE("TABLE"),
     VIEW("VIEW"),
     SYSTEM_TABLE("SYSTEM TABLE"),
@@ -13,13 +12,11 @@ public enum SQLTableType
 
     private final String value;
 
-    SQLTableType(String value)
-    {
+    SQLTableType(String value) {
         this.value = value;
     }
 
-    public String get()
-    {
+    public String get() {
         return value;
     }
 }

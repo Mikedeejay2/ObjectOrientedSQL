@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.column.key;
 
-public interface SQLForeignKeyMetaGetter<T>
-{
+public interface SQLForeignKeyMetaGetter<T> {
     Object getForeignKeyMetaObject(T metaDataType);
 
     <R> R getForeignKeyMetaObject(T metaDataType, Class<R> type);

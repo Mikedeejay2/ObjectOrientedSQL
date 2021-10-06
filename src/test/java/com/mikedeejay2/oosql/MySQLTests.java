@@ -20,13 +20,11 @@ import java.sql.Connection;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
-public class MySQLTests implements TestInterface
-{
+public class MySQLTests implements TestInterface {
     private static SQLDatabase database;
 
     @BeforeAll
-    public static void connectDB()
-    {
+    public static void connectDB() {
         database = new SQLDatabase(new MySQLConnectionData(
             "test",
             "localhost",
@@ -37,20 +35,16 @@ public class MySQLTests implements TestInterface
         database.connect(true);
         System.out.println("Connected to Database");
 
-        if(database.exists())
-        {
+        if(database.exists()) {
             database.wipeDatabase();
-        }
-        else
-        {
+        } else {
             database.createDatabase();
         }
         database.reconnect(true);
     }
 
     @AfterAll
-    public static void disconnectDB()
-    {
+    public static void disconnectDB() {
         database.disconnect(true);
         System.out.println("Disconnected from Database");
     }
@@ -58,40 +52,35 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(0)
-    public void testConnection()
-    {
+    public void testConnection() {
         assertTrue(database.isConnected());
     }
 
     @Override
     @Test
     @Order(1)
-    public void testGetDBType()
-    {
+    public void testGetDBType() {
         assertSame(SQLType.MYSQL, database.getConnectionType());
     }
 
     @Override
     @Test
     @Order(1)
-    public void testDBExists()
-    {
+    public void testDBExists() {
         assertTrue(database.exists());
     }
 
     @Override
     @Test
     @Order(1)
-    public void testGetDBName()
-    {
+    public void testGetDBName() {
         assertEquals("test", database.getName());
     }
 
     @Override
     @Test
     @Order(1)
-    public void testGetDBConnectionInfo()
-    {
+    public void testGetDBConnectionInfo() {
         SQLConnectionData data = database.getConnectionData();
         assertNotNull(data);
         assertEquals("test", data.getDBName());
@@ -101,8 +90,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(1)
-    public void testGetDBConnection()
-    {
+    public void testGetDBConnection() {
         Connection connection = database.getConnection();
         assertNotNull(connection);
     }
@@ -110,8 +98,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(2)
-    public void testCreateTable()
-    {
+    public void testCreateTable() {
         SQLColumnInfo t1c1 = new SQLColumnInfo(
             SQLDataType.INTEGER,
             "user_id",
@@ -202,8 +189,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testTableExists()
-    {
+    public void testTableExists() {
         assertTrue(database.tableExists("users_table"));
         assertTrue(database.tableExists("branches_table"));
         assertFalse(database.tableExists("nonexistent_table"));
@@ -220,8 +206,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testTablesAmount()
-    {
+    public void testTablesAmount() {
         int number = database.getTablesAmount(SQLTableType.TABLE);
         // MySQL has internal tables which add to this number.
         // Therefore, an accurate test cannot be performed.
@@ -231,8 +216,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testRenameTable()
-    {
+    public void testRenameTable() {
         database.renameTable("users_table", "renamed_users");
         assertTrue(database.tableExists("renamed_users"));
         assertFalse(database.tableExists("users_table"));
@@ -250,8 +234,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testTableType()
-    {
+    public void testTableType() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -262,8 +245,7 @@ public class MySQLTests implements TestInterface
 
     @Override
     @Test
-    public void testColumnExists()
-    {
+    public void testColumnExists() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -282,8 +264,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetColumnSize()
-    {
+    public void testGetColumnSize() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -305,8 +286,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetColumnsAmount()
-    {
+    public void testGetColumnsAmount() {
         SQLTable table1 = database.getTable("users_table");
         assertNotNull(table1);
         SQLTable table2 = database.getTable("branches_table");
@@ -321,8 +301,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetDataType()
-    {
+    public void testGetDataType() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -340,8 +319,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testIsNotNull()
-    {
+    public void testIsNotNull() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -360,8 +338,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testIsPrimaryKey()
-    {
+    public void testIsPrimaryKey() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -377,8 +354,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testIsForeignKey()
-    {
+    public void testIsForeignKey() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -394,8 +370,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testHasDefault()
-    {
+    public void testHasDefault() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -411,8 +386,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testAutoIncrements()
-    {
+    public void testAutoIncrements() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -428,15 +402,13 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetColumns()
-    {
+    public void testGetColumns() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
         SQLColumn[] columns = table.getColumns();
         assertNotNull(columns);
-        for(int i = 0; i < columns.length; ++i)
-        {
+        for(int i = 0; i < columns.length; ++i) {
             SQLColumn curColumn = columns[i];
             assertNotNull(curColumn);
             SQLColumn testCol = table.getColumn(i);
@@ -448,15 +420,13 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetColumnNames()
-    {
+    public void testGetColumnNames() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
         String[] columns = table.getColumnNames();
         assertNotNull(columns);
-        for(int i = 0; i < columns.length; ++i)
-        {
+        for(int i = 0; i < columns.length; ++i) {
             String curColumn = columns[i];
             assertNotNull(curColumn);
             String testCol = table.getColumnName(i);
@@ -468,8 +438,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testHasConstraint()
-    {
+    public void testHasConstraint() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -493,8 +462,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetColumnInfo()
-    {
+    public void testGetColumnInfo() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -521,8 +489,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetColumnConstraints()
-    {
+    public void testGetColumnConstraints() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -552,8 +519,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetDefault()
-    {
+    public void testGetDefault() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -572,24 +538,21 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testIsDBEmpty()
-    {
+    public void testIsDBEmpty() {
         assertFalse(database.isEmpty());
     }
 
     @Override
     @Test
     @Order(3)
-    public void testGetColumnInfos()
-    {
+    public void testGetColumnInfos() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
         SQLColumnInfo[] infos = table.getColumnInfos();
         assertNotNull(infos);
         assertEquals(7, infos.length);
-        for(int i = 0; i < infos.length; ++i)
-        {
+        for(int i = 0; i < infos.length; ++i) {
             SQLColumnInfo curInfo = infos[i];
             SQLColumn curCol = table.getColumn(i);
             assertNotNull(curInfo);
@@ -601,8 +564,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetTableInfo()
-    {
+    public void testGetTableInfo() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -617,8 +579,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetColumnName()
-    {
+    public void testGetColumnName() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -633,8 +594,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(3)
-    public void testGetTableConstraints()
-    {
+    public void testGetTableConstraints() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -646,8 +606,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(4)
-    public void testAddColumn()
-    {
+    public void testAddColumn() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -670,8 +629,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(4)
-    public void testAddConstraint()
-    {
+    public void testAddConstraint() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -697,8 +655,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(4)
-    public void testRenameColumn()
-    {
+    public void testRenameColumn() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -721,8 +678,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(5)
-    public void testRemoveColumn()
-    {
+    public void testRemoveColumn() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 
@@ -734,8 +690,7 @@ public class MySQLTests implements TestInterface
     @Override
     @Test
     @Order(5)
-    public void testRemoveConstraint()
-    {
+    public void testRemoveConstraint() {
         SQLTable table = database.getTable("users_table");
         assertNotNull(table);
 

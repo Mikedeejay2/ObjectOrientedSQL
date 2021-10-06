@@ -7,8 +7,7 @@ import com.mikedeejay2.oosql.misc.index.SQLIndexInfoMetaGetter;
 import com.mikedeejay2.oosql.misc.SQLMetaDataGetter;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 
-public interface SQLTableMetaData extends SQLMetaDataGetter<SQLTableMeta>, SQLIndexInfoMetaGetter<SQLIndexInfoMeta>
-{
+public interface SQLTableMetaData extends SQLMetaDataGetter<SQLTableMeta>, SQLIndexInfoMetaGetter<SQLIndexInfoMeta> {
     SQLTableType getTableType();
 
     boolean columnExists(String columnName);

@@ -3,8 +3,7 @@ package com.mikedeejay2.oosql;
 import org.junit.jupiter.api.*;
 
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
-public interface TestInterface
-{
+public interface TestInterface {
     @Test
     void testConnection();
 

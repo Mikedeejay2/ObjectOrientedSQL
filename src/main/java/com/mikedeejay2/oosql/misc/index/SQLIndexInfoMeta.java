@@ -1,7 +1,6 @@
 package com.mikedeejay2.oosql.misc.index;
 
-public enum SQLIndexInfoMeta
-{
+public enum SQLIndexInfoMeta {
     // TABLE_CAT String => table catalog (may be null)
     TABLE_CAT("TABLE_CAT", 1),
     // TABLE_SCHEM String => table schema (may be null)
@@ -40,19 +39,16 @@ public enum SQLIndexInfoMeta
     private final String str;
     private final int index;
 
-    SQLIndexInfoMeta(String str, int index)
-    {
+    SQLIndexInfoMeta(String str, int index) {
         this.str = str;
         this.index = index;
     }
 
-    public String asString()
-    {
+    public String asString() {
         return str;
     }
 
-    public int asIndex()
-    {
+    public int asIndex() {
         return index;
     }
 }

@@ -1,11 +1,7 @@
 package com.mikedeejay2.oosql.database;
 
-import com.mikedeejay2.oosql.connector.MySQLConnection;
 import com.mikedeejay2.oosql.connector.SQLConnection;
-import com.mikedeejay2.oosql.connector.SQLiteConnection;
-import com.mikedeejay2.oosql.connector.data.MySQLConnectionData;
 import com.mikedeejay2.oosql.connector.data.SQLConnectionData;
-import com.mikedeejay2.oosql.connector.data.SQLiteConnectionData;
 import com.mikedeejay2.oosql.execution.SQLExecutor;
 import com.mikedeejay2.oosql.misc.SQLType;
 import com.mikedeejay2.oosql.sqlgen.DebugSQLGenerator;
@@ -19,16 +15,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
-{
+public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData {
     protected String databaseName;
     protected SQLConnection connection;
     protected SQLConnectionData connectionData;
     protected SQLGenerator generator;
     protected SQLExecutor executor;
 
-    public SQLDatabase(SQLConnectionData data)
-    {
+    public SQLDatabase(SQLConnectionData data) {
         this.connectionData = data;
         this.databaseName = connectionData.getDBName();
         this.generator = new DebugSQLGenerator();
@@ -36,14 +30,12 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     }
 
     @Override
-    public void setInfo(SQLConnectionData data)
-    {
+    public void setInfo(SQLConnectionData data) {
         this.connectionData = data;
     }
 
     @Override
-    public boolean connect(boolean throwErrors)
-    {
+    public boolean connect(boolean throwErrors) {
         if(isConnected()) return false;
         if(connection == null) this.connection = connectionData.createConnection();
         executor.setSQLConnection(connection);
@@ -51,107 +43,91 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     }
 
     @Override
-    public boolean disconnect(boolean throwErrors)
-    {
+    public boolean disconnect(boolean throwErrors) {
         if(!isConnected()) return false;
         return connection.disconnect(throwErrors);
     }
 
     @Override
-    public boolean reconnect(boolean throwErrors)
-    {
+    public boolean reconnect(boolean throwErrors) {
         if(!isConnected()) return connect(throwErrors);
         return disconnect(throwErrors) && connect(throwErrors);
     }
 
     @Override
-    public boolean isConnected()
-    {
+    public boolean isConnected() {
         return connection != null && connection.isConnected();
     }
 
     @Override
-    public SQLConnection getSQLConnection()
-    {
+    public SQLConnection getSQLConnection() {
         return connection;
     }
 
     @Override
-    public Connection getConnection()
-    {
+    public Connection getConnection() {
         return connection.getConnection();
     }
 
     @Override
-    public SQLType getConnectionType()
-    {
+    public SQLType getConnectionType() {
         return connectionData.getType();
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return databaseName;
     }
 
     @Override
-    public SQLConnectionData getConnectionData()
-    {
+    public SQLConnectionData getConnectionData() {
         return connectionData;
     }
 
     @Override
-    public SQLTable getTable(String tableName)
-    {
+    public SQLTable getTable(String tableName) {
         if(!tableExists(tableName)) return null;
         return new SQLTable(this, tableName);
     }
 
     @Override
-    public SQLTable createTable(SQLTableInfo info)
-    {
+    public SQLTable createTable(SQLTableInfo info) {
         String command = generator.createTable(info);
 
         int code = executor.executeUpdate(command);
         if(code == -1) return null;
 
-        SQLTable table = new SQLTable(this, info.getTableName());
-        return table;
+        return new SQLTable(this, info.getTableName());
     }
 
     @Override
-    public boolean dropTable(String tableName)
-    {
+    public boolean dropTable(String tableName) {
         String command = generator.dropTable(tableName);
         int code = executor.executeUpdate(command);
         return code != -1;
     }
 
     @Override
-    public boolean wipeDatabase()
-    {
+    public boolean wipeDatabase() {
         return dropDatabase() && createDatabase();
     }
 
     @Override
-    public boolean createDatabase()
-    {
+    public boolean createDatabase() {
         String command = generator.createDatabase(databaseName);
         int code = executor.executeUpdate(command);
         return code != -1;
     }
 
     @Override
-    public boolean dropDatabase()
-    {
+    public boolean dropDatabase() {
         String command = generator.dropDatabase(databaseName);
         int code = executor.executeUpdate(command);
         return code != -1;
     }
 
     @Override
-    public boolean exists()
-    {
+    public boolean exists() {
         for(String catalog : getCatalogs())
         {
             if(databaseName.equals(catalog)) return true;
@@ -160,8 +136,7 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     }
 
     @Override
-    public boolean renameDatabase(String newName)
-    {
+    public boolean renameDatabase(String newName) {
         String command = generator.renameDatabase(databaseName, newName);
         int code = executor.executeUpdate(command);
         connectionData.setDBName(newName);
@@ -170,41 +145,31 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     }
 
     @Override
-    public boolean renameTable(String tableName, String newName)
-    {
+    public boolean renameTable(String tableName, String newName) {
         String command = generator.renameTable(tableName, newName);
         int code = executor.executeUpdate(command);
         return code != -1;
     }
 
     @Override
-    public DatabaseMetaData getMetaData()
-    {
-        try
-        {
+    public DatabaseMetaData getMetaData() {
+        try {
             return this.getConnection().getMetaData();
-        }
-        catch(SQLException throwables)
-        {
+        } catch(SQLException throwables) {
             throwables.printStackTrace();
             return null;
         }
     }
 
     @Override
-    public String[] getCatalogs()
-    {
+    public String[] getCatalogs() {
         List<String> catalogsList = new ArrayList<>();
-        try
-        {
+        try {
             ResultSet catalogs = getMetaData().getCatalogs();
-            while(catalogs.next())
-            {
+            while(catalogs.next()) {
                 catalogsList.add(catalogs.getString(1));
             }
-        }
-        catch(SQLException throwables)
-        {
+        } catch(SQLException throwables) {
             throwables.printStackTrace();
         }
 
@@ -212,127 +177,99 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData
     }
 
     @Override
-    public SQLTable[] getTables(SQLTableType... types)
-    {
+    public SQLTable[] getTables(SQLTableType... types) {
         String[] typeStrs = null;
 
-        if(types != null)
-        {
+        if(types != null) {
             typeStrs = new String[types.length];
-            for(int i = 0; i < typeStrs.length; ++i)
-            {
+            for(int i = 0; i < typeStrs.length; ++i) {
                 typeStrs[i] = types[i].get();
             }
         }
         SQLTable[] tables = new SQLTable[getTablesAmount(types)];
-        try
-        {
+        try {
             ResultSet result = this.getMetaData().getTables(null, null, null, typeStrs);
-            while(result.next())
-            {
+            while(result.next()) {
                 String tableName = result.getString(SQLTableMeta.TABLE_NAME.asIndex());
                 SQLTable table = new SQLTable(this, tableName);
                 tables[result.getRow() - 1] = table;
             }
-        }
-        catch(SQLException throwables)
-        {
+        } catch(SQLException throwables) {
             throwables.printStackTrace();
         }
         return tables;
     }
 
     @Override
-    public String[] getTableNames(SQLTableType... types)
-    {
+    public String[] getTableNames(SQLTableType... types) {
         String[] typeStrs = null;
 
-        if(types != null)
-        {
+        if(types != null) {
             typeStrs = new String[types.length];
-            for(int i = 0; i < typeStrs.length; ++i)
-            {
+            for(int i = 0; i < typeStrs.length; ++i) {
                 typeStrs[i] = types[i].get();
             }
         }
         String[] tables = new String[getTablesAmount(types)];
-        try
-        {
+        try {
             ResultSet result = this.getMetaData().getTables(null, null, null, typeStrs);
-            while(result.next())
-            {
+            while(result.next()) {
                 String tableName = result.getString(SQLTableMeta.TABLE_NAME.asIndex());
                 tables[result.getRow() - 1] = tableName;
             }
-        }
-        catch(SQLException throwables)
-        {
+        } catch(SQLException throwables) {
             throwables.printStackTrace();
         }
         return tables;
     }
 
     @Override
-    public boolean tableExists(String tableName)
-    {
-        try
-        {
+    public boolean tableExists(String tableName) {
+        try {
             ResultSet result = getMetaData().getTables(null, null, tableName, null);
             return result.next();
-        }
-        catch(SQLException throwables)
-        {
+        } catch(SQLException throwables) {
             throwables.printStackTrace();
         }
         return false;
     }
 
     @Override
-    public boolean tableExists(SQLTable table)
-    {
+    public boolean tableExists(SQLTable table) {
         return tableExists(table.getName());
     }
 
     @Override
-    public int getTablesAmount(SQLTableType... types)
-    {
+    public int getTablesAmount(SQLTableType... types) {
         String[] typesStrs = null;
-        if(types != null)
-        {
+        if(types != null) {
             typesStrs = new String[types.length];
-            for(int i = 0; i < types.length; ++i)
-            {
+            for(int i = 0; i < types.length; ++i) {
                 SQLTableType curType = types[i];
                 typesStrs[i] = curType.get();
             }
         }
 
-        try
-        {
+        try {
             ResultSet result = this.getMetaData().getTables(null, null, null, typesStrs);
             result.last();
             return result.getRow();
-        }
-        catch(SQLException throwables)
-        {
+        } catch(SQLException throwables) {
             throwables.printStackTrace();
         }
         return 0;
     }
 
     @Override
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return getTablesAmount() == 0;
     }
 
-    public SQLGenerator getGenerator()
-    {
+    public SQLGenerator getGenerator() {
         return generator;
     }
 
-    public SQLExecutor getExecutor()
-    {
+    public SQLExecutor getExecutor() {
         return executor;
     }
 }

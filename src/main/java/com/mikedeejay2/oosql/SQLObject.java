@@ -11,6 +11,5 @@ package com.mikedeejay2.oosql;
  *
  * @author Mikedeejay2
  */
-public interface SQLObject
-{
+public interface SQLObject {
 }

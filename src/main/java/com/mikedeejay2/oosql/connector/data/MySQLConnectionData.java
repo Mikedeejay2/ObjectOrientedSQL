@@ -1,5 +1,7 @@
 package com.mikedeejay2.oosql.connector.data;
 
+import com.mikedeejay2.oosql.connector.MySQLConnection;
+import com.mikedeejay2.oosql.connector.SQLConnection;
 import com.mikedeejay2.oosql.misc.SQLType;
 
 public class MySQLConnectionData extends SQLConnectionData {
@@ -17,6 +19,15 @@ public class MySQLConnectionData extends SQLConnectionData {
         this.username = username;
         this.password = password;
         this.useSSL = false;
+    }
+
+    @Override
+    public MySQLConnection createConnection() {
+        return new MySQLConnection(this);
+    }
+
+    public MySQLConnection createConnection(boolean legacy) {
+        return new MySQLConnection(this, legacy);
     }
 
     public String getHost() {

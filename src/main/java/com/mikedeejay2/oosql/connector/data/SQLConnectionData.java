@@ -24,7 +24,5 @@ public abstract class SQLConnectionData {
         return type;
     }
 
-    public SQLConnection createConnection() {
-        return type.createConnection(this);
-    }
+    public abstract SQLConnection createConnection();
 }

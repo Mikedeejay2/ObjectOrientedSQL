@@ -50,4 +50,6 @@ public interface SQLTableInterface extends SQLObject {
     boolean removeConstraint(SQLConstraint constraint);
 
     boolean removeConstraints(SQLConstraint... constraints);
+
+    boolean clearTable();
 }

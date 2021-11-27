@@ -194,6 +194,13 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData {
     }
 
     @Override
+    public boolean clearTable() {
+        String command = generator.truncateTable(tableName);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
     public SQLTableType getTableType() {
         String tableTypeStr = getMetaString(SQLTableMeta.TABLE_TYPE);
         SQLTableType tableType = SQLTableType.valueOf(tableTypeStr.replace(" ", "_"));

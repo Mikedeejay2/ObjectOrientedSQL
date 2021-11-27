@@ -43,4 +43,6 @@ public interface SQLGenerator {
     String insertRow(String tableName, Map<String, Object> values);
 
     String deleteData(String tableName, String condition);
+
+    String truncateTable(String tableName);
 }

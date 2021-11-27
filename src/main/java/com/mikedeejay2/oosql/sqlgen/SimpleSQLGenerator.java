@@ -331,6 +331,11 @@ public class SimpleSQLGenerator implements SQLGenerator {
         return "DELETE FROM `" + tableName + "` WHERE " + condition + ";";
     }
 
+    @Override
+    public String truncateTable(String tableName) {
+        return "TRUNCATE TABLE `" + tableName + "`;";
+    }
+
     private String setDataType(String tableName, SQLColumnInfo info) {
         StringBuilder builder = new StringBuilder();
         builder.append("ALTER TABLE `")

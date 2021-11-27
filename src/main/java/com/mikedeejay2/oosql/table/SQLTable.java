@@ -287,6 +287,7 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData {
     }
 
     @Override
+    @Deprecated
     public String getCheck() {
         // TODO: How do we get the check condition?
         return null;

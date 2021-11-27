@@ -7,7 +7,6 @@ import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.table.SQLTableInfo;
 
-import java.io.Serializable;
 import java.util.*;
 
 public class SimpleSQLGenerator implements SQLGenerator {
@@ -325,6 +324,11 @@ public class SimpleSQLGenerator implements SQLGenerator {
 
         builder.append(");");
         return builder.toString();
+    }
+
+    @Override
+    public String deleteData(String tableName, String condition) {
+        return "DELETE FROM `" + tableName + "` WHERE " + condition + ";";
     }
 
     private String setDataType(String tableName, SQLColumnInfo info) {

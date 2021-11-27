@@ -97,4 +97,9 @@ public class DebugSQLGenerator extends SimpleSQLGenerator {
     public String insertRow(String tableName, Map<String, Object> values) {
         return print(super.insertRow(tableName, values));
     }
+
+    @Override
+    public String deleteData(String tableName, String condition) {
+        return print(super.deleteData(tableName, condition));
+    }
 }

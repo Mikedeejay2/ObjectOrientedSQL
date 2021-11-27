@@ -13,7 +13,7 @@ public interface SQLTableInterface extends SQLObject {
 
     String[] getColumnNames();
 
-    boolean renameTable(String newName);
+    boolean rename(String newName);
 
     SQLColumn getColumn(String columnName);
 
@@ -51,5 +51,5 @@ public interface SQLTableInterface extends SQLObject {
 
     boolean removeConstraints(SQLConstraint... constraints);
 
-    boolean clearTable();
+    boolean clear();
 }

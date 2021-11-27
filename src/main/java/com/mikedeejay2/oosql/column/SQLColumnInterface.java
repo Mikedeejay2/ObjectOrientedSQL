@@ -20,7 +20,7 @@ public interface SQLColumnInterface extends SQLObject {
 
     boolean addConstraints(SQLConstraints constraints);
 
-    boolean renameColumn(String newName);
+    boolean rename(String newName);
 
     boolean removeConstraint(SQLConstraint constraint);
 

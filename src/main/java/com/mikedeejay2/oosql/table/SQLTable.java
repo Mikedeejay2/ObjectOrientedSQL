@@ -28,7 +28,7 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData {
     }
 
     @Override
-    public boolean renameTable(String newName) {
+    public boolean rename(String newName) {
         boolean success = database.renameTable(tableName, newName);
         this.tableName = newName;
         return success;
@@ -194,7 +194,7 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData {
     }
 
     @Override
-    public boolean clearTable() {
+    public boolean clear() {
         String command = generator.truncateTable(tableName);
         int code = executor.executeUpdate(command);
         return code != -1;

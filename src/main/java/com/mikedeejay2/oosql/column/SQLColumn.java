@@ -77,7 +77,7 @@ public class SQLColumn implements SQLColumnInterface, SQLColumnMetaData {
     }
 
     @Override
-    public boolean renameColumn(String newName) {
+    public boolean rename(String newName) {
         return table.renameColumn(columnName, newName);
     }
 

@@ -36,13 +36,13 @@ interface SQLDatabaseInterface extends SQLObject {
 
     boolean dropTable(String tableName);
 
-    boolean wipeDatabase();
+    boolean wipe();
 
-    boolean createDatabase();
+    boolean create();
 
-    boolean dropDatabase();
+    boolean drop();
 
-    boolean renameDatabase(String newName);
+    boolean rename(String newName);
 
     boolean renameTable(String tableName, String newName);
 }

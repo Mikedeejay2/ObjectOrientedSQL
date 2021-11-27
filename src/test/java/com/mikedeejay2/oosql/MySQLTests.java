@@ -36,9 +36,9 @@ public class MySQLTests implements TestInterface {
         System.out.println("Connected to Database");
 
         if(database.exists()) {
-            database.wipeDatabase();
+            database.wipe();
         } else {
-            database.createDatabase();
+            database.create();
         }
         database.reconnect(true);
     }
@@ -225,7 +225,7 @@ public class MySQLTests implements TestInterface {
         assertNotNull(table);
         assertEquals("renamed_users", table.getName());
 
-        table.renameTable("users_table");
+        table.rename("users_table");
         assertEquals("users_table", table.getName());
         assertTrue(database.tableExists("users_table"));
         assertFalse(database.tableExists("renamed_users"));

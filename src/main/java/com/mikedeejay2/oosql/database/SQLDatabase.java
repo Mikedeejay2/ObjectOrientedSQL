@@ -108,19 +108,19 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData {
     }
 
     @Override
-    public boolean wipeDatabase() {
-        return dropDatabase() && createDatabase();
+    public boolean wipe() {
+        return drop() && create();
     }
 
     @Override
-    public boolean createDatabase() {
+    public boolean create() {
         String command = generator.createDatabase(databaseName);
         int code = executor.executeUpdate(command);
         return code != -1;
     }
 
     @Override
-    public boolean dropDatabase() {
+    public boolean drop() {
         String command = generator.dropDatabase(databaseName);
         int code = executor.executeUpdate(command);
         return code != -1;
@@ -136,7 +136,7 @@ public class SQLDatabase implements SQLDatabaseInterface, SQLDatabaseMetaData {
     }
 
     @Override
-    public boolean renameDatabase(String newName) {
+    public boolean rename(String newName) {
         String command = generator.renameDatabase(databaseName, newName);
         int code = executor.executeUpdate(command);
         connectionData.setDBName(newName);

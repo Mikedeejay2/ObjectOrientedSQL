@@ -7,6 +7,7 @@ import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
 import com.mikedeejay2.oosql.table.SQLTableInfo;
 
+import java.io.Serializable;
 import java.util.*;
 
 public class SimpleSQLGenerator implements SQLGenerator {
@@ -299,6 +300,33 @@ public class SimpleSQLGenerator implements SQLGenerator {
         return builder.toString();
     }
 
+    @Override
+    public String insertRow(String tableName, Object... values) {
+        return "INSERT INTO `" + tableName + "` VALUES (" + formatValues(values) + ");";
+    }
+
+    @Override
+    public String insertRow(String tableName, Map<String, Object> values) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("INSERT INTO `").append(tableName).append("` (");
+
+        String[] columns = values.keySet().toArray(new String[0]);
+        for(int i = 0; i < columns.length; ++i) {
+            builder.append("`")
+                .append(columns[i])
+                .append("`");
+            if(i != columns.length - 1) builder.append(", ");
+        }
+
+        builder.append(") VALUES (");
+
+        Object[] valsArr = values.values().toArray(new Object[0]);
+        builder.append(formatValues(valsArr));
+
+        builder.append(");");
+        return builder.toString();
+    }
+
     private String setDataType(String tableName, SQLColumnInfo info) {
         StringBuilder builder = new StringBuilder();
         builder.append("ALTER TABLE `")
@@ -423,6 +451,22 @@ public class SimpleSQLGenerator implements SQLGenerator {
             if(sizeI != sizes.length - 1) builder.append(", ");
         }
         builder.append(")");
+        return builder.toString();
+    }
+
+    private String formatValues(Object... values) {
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < values.length; ++i) {
+            Object value = values[i];
+            if(value == null) {
+                builder.append("NULL");
+            } else if(value instanceof String) {
+                builder.append("'")
+                    .append(value)
+                    .append("'");
+            }
+            if(i != values.length - 1) builder.append(", ");
+        }
         return builder.toString();
     }
 }

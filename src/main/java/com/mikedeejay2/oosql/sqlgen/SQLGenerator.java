@@ -5,6 +5,8 @@ import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.table.SQLTableInfo;
 
+import java.util.Map;
+
 public interface SQLGenerator {
     String createTable(SQLTableInfo info);
 
@@ -35,4 +37,8 @@ public interface SQLGenerator {
     String dropColumn(String tableName, String columnName);
 
     String renameColumn(String tableName, SQLColumnInfo info, String newName);
+
+    String insertRow(String tableName, Object... values);
+
+    String insertRow(String tableName, Map<String, Object> values);
 }

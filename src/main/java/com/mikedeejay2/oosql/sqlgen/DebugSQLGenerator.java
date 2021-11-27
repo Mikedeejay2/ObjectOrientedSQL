@@ -5,6 +5,8 @@ import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.table.SQLTableInfo;
 
+import java.util.Map;
+
 public class DebugSQLGenerator extends SimpleSQLGenerator {
     public String print(String str) {
         System.out.println(str);
@@ -84,5 +86,15 @@ public class DebugSQLGenerator extends SimpleSQLGenerator {
     @Override
     public String renameColumn(String tableName, SQLColumnInfo info, String newName) {
         return print(super.renameColumn(tableName, info, newName));
+    }
+
+    @Override
+    public String insertRow(String tableName, Object... values) {
+        return print(super.insertRow(tableName, values));
+    }
+
+    @Override
+    public String insertRow(String tableName, Map<String, Object> values) {
+        return print(super.insertRow(tableName, values));
     }
 }

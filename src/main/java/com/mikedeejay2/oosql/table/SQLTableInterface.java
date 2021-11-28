@@ -52,4 +52,8 @@ public interface SQLTableInterface extends SQLObject {
     boolean removeConstraints(SQLConstraint... constraints);
 
     boolean clear();
+
+    boolean insertRow(Object... values);
+
+    boolean insertRow(String[] columns, Object[] values);
 }

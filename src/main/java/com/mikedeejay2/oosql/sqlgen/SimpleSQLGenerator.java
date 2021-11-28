@@ -305,11 +305,10 @@ public class SimpleSQLGenerator implements SQLGenerator {
     }
 
     @Override
-    public String insertRow(String tableName, Map<String, Object> values) {
+    public String insertRow(String tableName, String[] columns, Object[] values) {
         StringBuilder builder = new StringBuilder();
         builder.append("INSERT INTO `").append(tableName).append("` (");
 
-        String[] columns = values.keySet().toArray(new String[0]);
         for(int i = 0; i < columns.length; ++i) {
             builder.append("`")
                 .append(columns[i])
@@ -319,8 +318,7 @@ public class SimpleSQLGenerator implements SQLGenerator {
 
         builder.append(") VALUES (");
 
-        Object[] valsArr = values.values().toArray(new Object[0]);
-        builder.append(formatValues(valsArr));
+        builder.append(formatValues(values));
 
         builder.append(");");
         return builder.toString();

@@ -201,6 +201,20 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData {
     }
 
     @Override
+    public boolean insertRow(Object... values) {
+        String command = generator.insertRow(tableName, values);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
+    public boolean insertRow(String[] columns, Object[] values) {
+        String command = generator.insertRow(tableName, columns, values);
+        int code = executor.executeUpdate(command);
+        return code != -1;
+    }
+
+    @Override
     public SQLTableType getTableType() {
         String tableTypeStr = getMetaString(SQLTableMeta.TABLE_TYPE);
         SQLTableType tableType = SQLTableType.valueOf(tableTypeStr.replace(" ", "_"));

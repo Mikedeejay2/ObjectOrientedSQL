@@ -7,6 +7,7 @@ import com.mikedeejay2.oosql.database.SQLDatabase;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraint;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraintData;
 import com.mikedeejay2.oosql.misc.constraint.SQLConstraints;
+import com.mikedeejay2.oosql.row.SQLRow;
 
 public interface SQLTableInterface extends SQLObject {
     SQLColumn[] getColumns();
@@ -56,4 +57,12 @@ public interface SQLTableInterface extends SQLObject {
     boolean insertRow(Object... values);
 
     boolean insertRow(String[] columns, Object[] values);
+
+    boolean deleteRow(String condition);
+
+//    boolean deleteRow(Object primaryKeyValue); TODO
+
+//    boolean deleteRow(SQLRow<?> row); TODO
+
+    boolean deleteRow(int index);
 }

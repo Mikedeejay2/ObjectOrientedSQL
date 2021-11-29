@@ -215,6 +215,16 @@ public class SQLTable implements SQLTableInterface, SQLTableMetaData {
     }
 
     @Override
+    public boolean deleteRow(String condition) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteRow(int index) {
+        return false;
+    }
+
+    @Override
     public SQLTableType getTableType() {
         String tableTypeStr = getMetaString(SQLTableMeta.TABLE_TYPE);
         SQLTableType tableType = SQLTableType.valueOf(tableTypeStr.replace(" ", "_"));
